@@ -14,8 +14,8 @@
         "gmail-user": "Your email",
         "gmail-password": "Your password",
         "nop": 3,
-        "admin_user": "adnan",
-        "admin_password": "adnan",
+        "admin_user": "username",
+        "admin_password": "password",
         "upload_location": "Any location except cloud!"
     }
 }
