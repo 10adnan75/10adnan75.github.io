@@ -1,0 +1,21 @@
+{
+    "params":
+    {
+        "local_server": "True",
+        "local_uri": "mysql://root:@localhost:port/db-name",
+        "prod_uri": "mysql://root:@localhost:port/db-name",
+        "blog_name": "Your nickname",
+        "tag_line": "Your tagline",
+        "so_url": "Stackoverflow",
+        "tw_url": "Twitter",
+        "hr_url": "Hackerrank",
+        "in_url": "Linkedin",
+        "gh_url": "Github",
+        "gmail-user": "Your email",
+        "gmail-password": "Your password",
+        "nop": 3,
+        "admin_user": "adnan",
+        "admin_password": "adnan",
+        "upload_location": "Any location except cloud!"
+    }
+}
