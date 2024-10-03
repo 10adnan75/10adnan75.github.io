@@ -4034,6 +4034,7 @@ input[type=button].btn-block {
   border-radius: 0.5rem;
 }
 .navbar-toggler:hover, .navbar-toggler:focus {
+  background-color: #a9a9a9;
   text-decoration: none;
 }
 
