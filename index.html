@@ -1,96 +1,341 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080809">
-  <meta name="description" content="Adnan Shaikh builds systems, web projects, and research experiments. Explore the portfolio through an interactive terminal.">
-  <meta name="author" content="Adnan Mazharuddin Shaikh">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://10adnan75.github.io/">
-  <meta property="og:title" content="10adnan75 | Adnan Shaikh">
-  <meta property="og:description" content="Systems, web, research. Enter the terminal.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://10adnan75.github.io/">
-  <meta property="og:image" content="https://10adnan75.github.io/img/og.png">
-  <meta property="og:image:width" content="1721">
-  <meta property="og:image:height" content="914">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="10adnan75 | Adnan Shaikh">
-  <meta name="twitter:description" content="Systems, web, research. Enter the terminal.">
-  <meta name="twitter:image" content="https://10adnan75.github.io/img/og.png">
-  <title>Adnan Mazharuddin Shaikh</title>
-  <link rel="icon" href="/img/adnan.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-  <div id="boot-loader" class="boot-loader" role="status" aria-label="Starting Adnan OS">
-    <span class="boot-loader-mark">ams</span><span class="boot-loader-line">booting portfolio<span></span></span>
-  </div>
-  <a class="skip-link" href="#command-input">Skip to terminal</a>
-  <header class="site-header">
-    <a class="wordmark" href="/" data-route="home" aria-label="AMS, Adnan Mazharuddin Shaikh, home"><span class="monogram">ams</span></a>
-    <nav aria-label="Main navigation">
-      <a href="/" data-route="home" class="active">/home</a>
-      <a href="/about/" data-route="about">/about</a>
-      <a href="/projects/" data-route="projects">/projects</a>
-      <a href="/contact/" data-route="contact">/contact</a>
-    </nav>
-    <a class="resume-link" href="/adnanmaz@usc.edu.pdf" target="_blank" rel="noopener">Résumé </a>
-  </header>
-  <main>
-    <section class="journey" aria-label="Interactive portfolio workstation">
-      <div class="stage">
-        <div class="intro">
-          <p class="eyebrow"> ADNAN MAZHARUDDIN SHAIKH</p>
-          <h1>I build stuff.<br><span>It mostly works.</span></h1>
-          <p class="intro-copy">Code. Football. Larp.</p>
-          <button class="primary-button" id="enter-terminal">Boot me up</button>
-        </div>
-        <div id="computer-scene" aria-hidden="true"></div>
-        <div id="terminal-layer">
-          <section class="terminal" id="terminal" aria-label="Adnan OS terminal">
-            <div class="screen-display" id="screen-display">
-              <div class="desktop-hint" id="desktop-hint" hidden><span id="desktop-message">Terminal is minimized</span></div>
-              <section class="terminal-window" id="terminal-window" aria-label="Terminal window">
-                <div class="terminal-titlebar" id="terminal-titlebar">
-                  <div class="window-controls" role="group" aria-label="Window controls">
-                    <button class="traffic-light close-window" id="window-close" aria-label="Close Terminal" title="Close"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 3 6 6m0-6-6 6"/></svg></button>
-                    <button class="traffic-light minimize-window" id="window-minimize" aria-label="Minimize Terminal" title="Minimize"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6h7"/></svg></button>
-                    <button class="traffic-light maximize-window" id="window-maximize" aria-label="Maximize Terminal" aria-pressed="false" title="Maximize"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 5V2h3M7 10h3V7"/></svg></button>
-                  </div>
-                  <span class="window-title"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 4h5l2 2h7v7H1z"/></svg><span id="current-path">~</span><span class="shell-name"> zsh</span></span><button id="view-switch" class="view-switch" aria-label="Switch to desktop view" aria-pressed="false">Desktop</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#080809" />
+    <meta
+      name="description"
+      content="Adnan Shaikh builds systems, web projects, and research experiments. Explore the portfolio through an interactive terminal."
+    />
+    <meta name="author" content="Adnan Mazharuddin Shaikh" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://10adnan75.github.io/" />
+    <meta property="og:title" content="10adnan75 | Adnan Shaikh" />
+    <meta
+      property="og:description"
+      content="Systems, web, research. Enter the terminal."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://10adnan75.github.io/" />
+    <meta
+      property="og:image"
+      content="https://10adnan75.github.io/img/og.png"
+    />
+    <meta property="og:image:width" content="1721" />
+    <meta property="og:image:height" content="914" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="10adnan75 | Adnan Shaikh" />
+    <meta
+      name="twitter:description"
+      content="Systems, web, research. Enter the terminal."
+    />
+    <meta
+      name="twitter:image"
+      content="https://10adnan75.github.io/img/og.png"
+    />
+    <title>Adnan Mazharuddin Shaikh</title>
+    <link rel="icon" href="/img/adnan.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div
+      id="boot-loader"
+      class="boot-loader"
+      role="status"
+      aria-label="Starting Adnan OS"
+    >
+      <span class="boot-loader-mark">ams</span
+      ><span class="boot-loader-line">booting portfolio<span></span></span>
+    </div>
+    <a class="skip-link" href="#command-input">Skip to terminal</a>
+    <header class="site-header">
+      <a
+        class="wordmark"
+        href="/"
+        data-route="home"
+        aria-label="AMS, Adnan Mazharuddin Shaikh, home"
+        ><span class="monogram">ams</span></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="/" data-route="home" class="active">/home</a>
+        <a href="/about/" data-route="about">/about</a>
+        <a href="/projects/" data-route="projects">/projects</a>
+        <a href="/contact/" data-route="contact">/contact</a>
+      </nav>
+      <a
+        class="resume-link"
+        href="/adnanmaz@usc.edu.pdf"
+        target="_blank"
+        rel="noopener"
+        >Résumé
+      </a>
+    </header>
+    <main>
+      <section class="journey" aria-label="Interactive portfolio workstation">
+        <div class="stage">
+          <div class="intro">
+            <p class="eyebrow">ADNAN MAZHARUDDIN SHAIKH</p>
+            <h1>I build stuff.<br /><span>It mostly works.</span></h1>
+            <p class="intro-copy">Code. Football. Larp.</p>
+            <button class="primary-button" id="enter-terminal">
+              Boot me up
+            </button>
+          </div>
+          <div id="computer-scene" aria-hidden="true"></div>
+          <div id="terminal-layer">
+            <section
+              class="terminal"
+              id="terminal"
+              aria-label="Adnan OS terminal"
+            >
+              <div class="screen-display" id="screen-display">
+                <div class="desktop-hint" id="desktop-hint" hidden>
+                  <span id="desktop-message">Terminal is minimized</span>
                 </div>
-            <div class="terminal-scroll" id="terminal-scroll" tabindex="0" aria-label="Terminal output">
-              <div id="terminal-output"></div>
-              <form id="command-form" autocomplete="off">
-                <label for="command-input"><span class="prompt-user">lurker</span><span class="prompt-host">@1adnan75</span><span class="accent"> ~ ❯</span><span class="sr-only"> Enter a command</span></label>
-                <div class="command-field"><div class="input-mirror" aria-hidden="true"><span id="cursor-before"></span><span class="block-cursor" id="block-cursor">&nbsp;</span><span id="cursor-after"></span><span class="input-hint" id="input-hint"> <span>type</span> <strong>help</strong><span class="hint-detail"> to explore</span></span></div><input id="command-input" name="command" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Terminal command" enterkeyhint="go" maxlength="200"></div>
-              </form>
-            </div>
-              <section id="desktop-view" class="desktop-view" aria-label="Portfolio desktop" hidden><aside class="desktop-sidebar"><span class="desktop-brand">ams OS</span><nav id="desktop-nav" aria-label="Desktop navigation"></nav><label class="desktop-page-label" for="desktop-page">Browse</label><select id="desktop-page" aria-label="Desktop page"></select><label class="desktop-theme-label" for="desktop-theme">Your vibe</label><select id="desktop-theme" aria-label="Desktop theme"></select></aside><div id="desktop-scroll" class="desktop-scroll" tabindex="0"><div id="desktop-content"></div></div></section>
-              </section>
-              <div class="terminal-dock" id="terminal-dock"><button id="restore-terminal" aria-label="Open Terminal" title="Terminal"><span class="dock-terminal-icon" aria-hidden="true">&gt;_</span><span class="dock-label">Terminal</span></button></div>
-            </div><div class="screen-off" aria-hidden="true"></div><div class="monitor-controls"><span class="monitor-brand">ams</span><button id="monitor-power" class="monitor-power" aria-label="Turn screen off" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9m-5-7a8 8 0 1 0 10 0"/></svg></button></div>
-          </section>
+                <section
+                  class="terminal-window"
+                  id="terminal-window"
+                  aria-label="Terminal window"
+                >
+                  <div class="terminal-titlebar" id="terminal-titlebar">
+                    <div
+                      class="window-controls"
+                      role="group"
+                      aria-label="Window controls"
+                    >
+                      <button
+                        class="traffic-light close-window"
+                        id="window-close"
+                        aria-label="Close Terminal"
+                        title="Close"
+                      >
+                        <svg viewBox="0 0 12 12" aria-hidden="true">
+                          <path d="m3 3 6 6m0-6-6 6" />
+                        </svg>
+                      </button>
+                      <button
+                        class="traffic-light minimize-window"
+                        id="window-minimize"
+                        aria-label="Minimize Terminal"
+                        title="Minimize"
+                      >
+                        <svg viewBox="0 0 12 12" aria-hidden="true">
+                          <path d="M2.5 6h7" />
+                        </svg>
+                      </button>
+                      <button
+                        class="traffic-light maximize-window"
+                        id="window-maximize"
+                        aria-label="Maximize Terminal"
+                        aria-pressed="false"
+                        title="Maximize"
+                      >
+                        <svg viewBox="0 0 12 12" aria-hidden="true">
+                          <path d="M2 5V2h3M7 10h3V7" />
+                        </svg>
+                      </button>
+                    </div>
+                    <span class="window-title"
+                      ><svg viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M1 4h5l2 2h7v7H1z" /></svg
+                      ><span id="current-path">~</span
+                      ><span class="shell-name"> zsh</span></span
+                    ><button
+                      id="view-switch"
+                      class="view-switch"
+                      aria-label="Switch to desktop view"
+                      aria-pressed="false"
+                    >
+                      Desktop
+                    </button>
+                  </div>
+                  <div
+                    class="terminal-scroll"
+                    id="terminal-scroll"
+                    tabindex="0"
+                    aria-label="Terminal output"
+                  >
+                    <div id="terminal-output"></div>
+                    <form id="command-form" autocomplete="off">
+                      <label for="command-input"
+                        ><span class="prompt-user">lurker</span
+                        ><span class="prompt-host">@1adnan75</span
+                        ><span class="accent"> ~ ❯</span
+                        ><span class="sr-only"> Enter a command</span></label
+                      >
+                      <div class="command-field">
+                        <div class="input-mirror" aria-hidden="true">
+                          <span id="cursor-before"></span
+                          ><span class="block-cursor" id="block-cursor"
+                            >&nbsp;</span
+                          ><span id="cursor-after"></span
+                          ><span class="input-hint" id="input-hint">
+                            <span>type</span> <strong>help</strong
+                            ><span class="hint-detail"> to explore</span></span
+                          >
+                        </div>
+                        <input
+                          id="command-input"
+                          name="command"
+                          type="text"
+                          spellcheck="false"
+                          autocapitalize="off"
+                          autocomplete="off"
+                          aria-label="Terminal command"
+                          enterkeyhint="go"
+                          maxlength="200"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                  <section
+                    id="desktop-view"
+                    class="desktop-view"
+                    aria-label="Portfolio desktop"
+                    hidden
+                  >
+                    <aside class="desktop-sidebar">
+                      <span class="desktop-brand">ams OS</span>
+                      <nav
+                        id="desktop-nav"
+                        aria-label="Desktop navigation"
+                      ></nav>
+                      <label class="desktop-page-label" for="desktop-page"
+                        >Browse</label
+                      ><select
+                        id="desktop-page"
+                        aria-label="Desktop page"
+                      ></select
+                      ><label class="desktop-theme-label" for="desktop-theme"
+                        >Your vibe</label
+                      ><select
+                        id="desktop-theme"
+                        aria-label="Desktop theme"
+                      ></select>
+                    </aside>
+                    <div
+                      id="desktop-scroll"
+                      class="desktop-scroll"
+                      tabindex="0"
+                    >
+                      <div id="desktop-content"></div>
+                    </div>
+                  </section>
+                </section>
+                <div class="terminal-dock" id="terminal-dock">
+                  <button
+                    id="restore-terminal"
+                    aria-label="Open Terminal"
+                    title="Terminal"
+                  >
+                    <span class="dock-terminal-icon" aria-hidden="true"
+                      >&gt;_</span
+                    ><span class="dock-label">Terminal</span>
+                  </button>
+                </div>
+              </div>
+              <div class="screen-off" aria-hidden="true"></div>
+              <div class="monitor-controls">
+                <span class="monitor-brand">ams</span
+                ><button
+                  id="monitor-power"
+                  class="monitor-power"
+                  aria-label="Turn screen off"
+                  aria-pressed="true"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3v9m-5-7a8 8 0 1 0 10 0" />
+                  </svg>
+                </button>
+              </div>
+            </section>
+          </div>
+          <div class="background-type" aria-hidden="true">
+            <svg viewBox="0 0 1000 180">
+              <text
+                x="0"
+                y="150"
+                textLength="1000"
+                lengthAdjust="spacingAndGlyphs"
+              >
+                10adnan75
+              </text>
+            </svg>
+          </div>
         </div>
-        <div class="background-type" aria-hidden="true"><svg viewBox="0 0 1000 180"><text x="0" y="150" textLength="1000" lengthAdjust="spacingAndGlyphs">10adnan75</text></svg></div>
+      </section>
+      <section class="quick-access" aria-label="Quick navigation">
+        <div>
+          <span class="eyebrow">TL;DR</span>
+          <h2>Skip the lore</h2>
+        </div>
+        <a href="/about/" data-route="about"
+          ><span class="shortcut-number">01</span
+          ><span>The larp<small>/about</small></span></a
+        >
+        <a href="/projects/" data-route="projects"
+          ><span class="shortcut-number">02</span
+          ><span>The side quests<small>/projects</small></span></a
+        >
+        <a href="/contact/" data-route="contact"
+          ><span class="shortcut-number">03</span
+          ><span>Say hey<small>/contact</small></span></a
+        >
+      </section>
+    </main>
+    <footer class="site-footer">
+      <span>© <span id="year">2026</span> Adnan Mazharuddin Shaikh</span
+      ><span>UNITED STATES</span>
+      <div>
+        <a href="https://github.com/10adnan75/" target="_blank" rel="noopener"
+          ><span data-icon="github"></span>GitHub</a
+        ><a
+          href="https://www.linkedin.com/in/10adnan75/"
+          target="_blank"
+          rel="noopener"
+          ><span data-icon="linkedin"></span>LinkedIn</a
+        >
       </div>
-    </section>
-    <section class="quick-access" aria-label="Quick navigation">
-      <div><span class="eyebrow">TL;DR</span><h2>Skip the lore</h2></div>
-      <a href="/about/" data-route="about"><span class="shortcut-number">01</span><span>The larp<small>/about</small></span></a>
-      <a href="/projects/" data-route="projects"><span class="shortcut-number">02</span><span>The side quests<small>/projects</small></span></a>
-      <a href="/contact/" data-route="contact"><span class="shortcut-number">03</span><span>Say hey<small>/contact</small></span></a>
-    </section>
-  </main>
-  <footer class="site-footer"><span>© <span id="year">2026</span> Adnan Mazharuddin Shaikh</span><span>UNITED STATES</span><div><a href="https://github.com/10adnan75/" target="_blank" rel="noopener"><span data-icon="github"></span>GitHub</a><a href="https://www.linkedin.com/in/10adnan75/" target="_blank" rel="noopener"><span data-icon="linkedin"></span>LinkedIn</a></div></footer>
-  <dialog id="project-preview" class="project-preview" aria-labelledby="preview-title"><div class="preview-toolbar"><h2 id="preview-title">Live preview</h2><a id="preview-external" target="_blank" rel="noopener noreferrer">Open in tab</a><button id="preview-close" aria-label="Close project preview">Close</button></div><p class="preview-note">Live demo. Blank? Open in tab.</p><div id="preview-frame"></div></dialog>
-  <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
-  <noscript><div class="noscript"><h2>Adnan Mazharuddin Shaikh</h2><p>Developer. Footballer. Coding since 2016.</p><a href="https://github.com/10adnan75/">Explore projects on GitHub</a>. <a href="/adnanmaz@usc.edu.pdf">Download résumé</a>. <a href="mailto:adnanmazharuddinshaikh@gmail.com">Email Adnan</a><p>Enable JavaScript for terminal mode.</p></div></noscript>
-  <script type="module" src="/js/script.js"></script>
-</body>
+    </footer>
+    <dialog
+      id="project-preview"
+      class="project-preview"
+      aria-labelledby="preview-title"
+    >
+      <div class="preview-toolbar">
+        <h2 id="preview-title">Live preview</h2>
+        <a id="preview-external" target="_blank" rel="noopener noreferrer"
+          >Open in tab</a
+        ><button id="preview-close" aria-label="Close project preview">
+          Close
+        </button>
+      </div>
+      <p class="preview-note">Live demo. Blank? Open in tab.</p>
+      <div id="preview-frame"></div>
+    </dialog>
+    <div
+      id="announcement"
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+    ></div>
+    <noscript
+      ><div class="noscript">
+        <h2>Adnan Mazharuddin Shaikh</h2>
+        <p>Developer. Footballer. Coding since 2016.</p>
+        <a href="https://github.com/10adnan75/">Explore projects on GitHub</a>.
+        <a href="/adnanmaz@usc.edu.pdf">Download résumé</a>.
+        <a href="mailto:adnanmazharuddinshaikh@gmail.com">Email Adnan</a>
+        <p>Enable JavaScript for terminal mode.</p>
+      </div></noscript
+    >
+    <script type="module" src="/js/script.js"></script>
+  </body>
 </html>
