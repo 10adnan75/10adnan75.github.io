@@ -458,7 +458,7 @@ function run(raw) {
   if (routes.includes(name)) {
     const page = setRoute(name);
     append(
-      `<div class="echo">lurker@1adnan75 ~ ❯ ${escapeHtml(raw)}</div>${pageContent(page, args)}`,
+      `<div class="echo">lurker@10adnan75 ~ ❯ ${escapeHtml(raw)}</div>${pageContent(page, args)}`,
     );
     announce(`${page} opened.`);
     return;
@@ -512,7 +512,7 @@ function run(raw) {
       result = `<p>Command not found: <span class="accent">${escapeHtml(name)}</span></p><p class="muted">Lost? Type <span class="accent">help</span>.</p>`;
   }
   append(
-    `<div class="echo">lurker@1adnan75 ~ ❯ ${escapeHtml(raw)}</div>${result}`,
+    `<div class="echo">lurker@10adnan75 ~ ❯ ${escapeHtml(raw)}</div>${result}`,
   );
   announce(
     `${name === "help" ? "Command help displayed" : "Command completed"}.`,
@@ -714,6 +714,7 @@ renderPage(
   [],
   false,
 );
+syncCursor();
 updateMotion();
 if (
   location.pathname !== "/" &&

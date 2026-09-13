@@ -2470,6 +2470,64 @@ body.workspace-maximized {
 .hint-detail {
   opacity: 0.75;
 }
+
+/* Native terminal rhythm: quiet chrome, readable output, one clean prompt. */
+.terminal-titlebar {
+  background: linear-gradient(180deg, #242429, #17171c);
+  border-bottom: 1px solid #000;
+  box-shadow: inset 0 1px #ffffff12;
+}
+.terminal-window .terminal-scroll {
+  padding: 30px 34px 34px;
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.75;
+}
+.terminal-window .terminal-scroll p {
+  margin-bottom: 14px;
+}
+.terminal-window .terminal-scroll h2,
+.terminal-window .terminal-scroll h3 {
+  margin-top: 6px;
+}
+.terminal-window #command-form,
+.terminal-window #command-form:focus-within {
+  margin-top: 20px;
+  min-height: 36px;
+  padding: 0;
+  gap: 9px;
+}
+.terminal-window #command-form label,
+.terminal-window .input-mirror,
+.terminal-window #command-input {
+  font:
+    14px/36px Menlo,
+    Monaco,
+    monospace;
+}
+.terminal-window .command-field,
+.terminal-window .input-mirror {
+  height: 36px;
+}
+.input-hint {
+  margin-left: 0.3ch;
+  color: color-mix(in srgb, var(--muted) 92%, transparent);
+  letter-spacing: 0.01em;
+}
+.input-hint strong {
+  color: var(--accent);
+}
+@media (max-width: 600px) {
+  .terminal-window .terminal-scroll {
+    padding: 22px 18px 26px;
+    font-size: 13px;
+  }
+  .terminal-window #command-form,
+  .terminal-window #command-form:focus-within {
+    margin-top: 16px;
+    gap: 6px;
+  }
+}
 .background-type {
   left: 0;
   right: 0;
