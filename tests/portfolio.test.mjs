@@ -95,7 +95,7 @@ test("terminal navigation, keyboard UX, filtering, and untrusted input", async (
   $("#command-input").setSelectionRange(2, 2);
   $("#command-input").dispatchEvent(new window.Event("input"));
   assert.equal($("#terminal").classList.contains("has-command"), true);
-  assert.equal($("#command-input").placeholder, "hint: help for the lore");
+  assert.equal($("#command-input").placeholder, "hint: type help for the lore");
   assert.equal($("#typing-cursor").textContent, "l");
   assert.equal($("#terminal").style.getPropertyValue("--caret-index"), "2");
   assert.equal(document.querySelector(".run-command"), null);
