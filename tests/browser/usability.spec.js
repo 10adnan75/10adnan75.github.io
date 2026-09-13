@@ -165,6 +165,19 @@ test('project snapshots and currently building stay useful',async({page})=>{
   await expect(page.getByRole('dialog')).toBeVisible();
 });
 
+test('project search works with category filters',async({page})=>{
+  await page.goto('/projects/');
+  const search=page.locator('[data-project-search]');
+  await search.fill('server');
+  await expect(page.locator('.project-card')).toHaveCount(2);
+  await page.getByRole('button',{name:'Systems',exact:true}).click();
+  await expect(page.locator('.project-card')).toHaveCount(2);
+  await search.fill('typing');
+  await expect(page.locator('.project-card')).toHaveCount(0);
+  await page.getByRole('button',{name:'Web',exact:true}).click();
+  await expect(page.locator('.project-card')).toHaveCount(1);
+});
+
 
 test('new theme palettes apply, persist and work from the picker',async({page})=>{
   await page.setViewportSize({width:390,height:844});await page.goto('/contact/');

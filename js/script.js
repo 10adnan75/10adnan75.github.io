@@ -158,8 +158,9 @@ function projectStory(project) {
   if(!story)return '';
   return `<details class="project-story"><summary>The breakdown <span aria-hidden="true">+</span></summary><div class="story-body"><span class="story-label">${story.label}</span><h4>${story.goal}</h4><p>${story.build}</p><div class="story-flow" aria-label="Project flow">${story.flow.map((step,i)=>`<span>${step}</span>${i<story.flow.length-1?'<b aria-hidden="true">→</b>':''}`).join('')}</div><p class="muted">${story.detail}</p>${external(`${profile.github}${project.repo}#readme`,'Read the docs')}</div></details>`;
 }
-function projectCards(filter = 'All') {
-  const shown = projects.filter(project => filter === 'All' || project.category.toLowerCase() === filter.toLowerCase());
+function projectCards(filter = 'All', query = '') {
+  const needle=query.trim().toLowerCase();
+  const shown = projects.filter(project => (filter === 'All' || project.category.toLowerCase() === filter.toLowerCase()) && (!needle || `${project.name} ${project.category} ${project.stack} ${project.description}`.toLowerCase().includes(needle)));
   return `<p class="project-count">${shown.length} ${shown.length===1?'project':'projects'}${filter==='All'?'':` in ${escapeHtml(filter.toLowerCase())}`}</p><div class="project-grid">${shown.map(project => {const demo=demos[project.repo],screen=demo?.image||projectScreens[project.repo];return `<article class="project-card">${screen?(demo?`<button class="project-shot" data-preview="${project.repo}" aria-label="Open ${project.name} live preview">`:'<div class="project-shot project-shot-static">')+`<img src="${screen}" alt="${project.name} preview" loading="lazy"><span>${demo?'Live preview':'Project snapshot'}</span>`+(demo?'</button>':'</div>'):''}<div class="project-kind">${project.category}: ${project.stack}</div><h3>${project.name}</h3><p>${project.description}</p><div class="project-actions">${external(`${profile.github}${project.repo}`, 'View source')}${demo?`<button class="preview-button" data-preview="${project.repo}">Try it live</button>`:''}</div>${projectStory(project)}</article>`;}).join('')}</div>`;
 }
 function nowBuilding(){
@@ -172,7 +173,7 @@ function pageContent(route, args = []) {
     case 'about': return `<p class="boot-line">~/about</p><div class="about-grid"><div><h2>Meet the source of the bugs</h2><p>${profile.name}. Developer. Footballer.</p><p>Community college roots. Coding since 2016. Python blogs since 2020.</p><p class="muted">Dating the debugger. It’s complicated.</p></div><img class="avatar" src="/img/avataaars.svg" alt="Adnan's illustrated avatar"></div><div class="tag-list">${['Python','Java','C++','C#','JavaScript','Linux','Git'].map(x=>`<span>${x}</span>`).join('')}</div><p>${external(profile.resume,'Résumé')}</p>${chips(['skills','projects','contact'])}`;
     case 'projects': {
       const filter = ['All','Systems','Web','Research'].find(x=>x.toLowerCase() === args.join(' ').toLowerCase()) || 'All';
-      return `<p class="boot-line">~/projects</p><h2>Side quests, shipped.</h2><p class="muted">Shipped code. Lost sleep.</p>${nowBuilding()}<div class="project-filters" role="group" aria-label="Filter projects">${['All','Systems','Web','Research'].map(x=>`<button class="filter-button ${filter === x ? 'active' : ''}" data-filter="${x}" aria-pressed="${filter === x}">${x}</button>`).join('')}</div><div class="project-results">${projectCards(filter)}</div><p class="contact-links">${external(profile.github+'?tab=repositories','All repositories')} ${external('https://github.com/10adnan75/projects','Project archive source')}</p>`;
+      return `<section class="project-view"><p class="boot-line">~/projects</p><h2>Side quests, shipped.</h2><p class="muted">Shipped code. Lost sleep.</p>${nowBuilding()}<div class="project-tools"><label class="sr-only" for="project-search">Search projects</label><input id="project-search" class="project-search" data-project-search type="search" placeholder="Search projects" autocomplete="off"><div class="project-filters" role="group" aria-label="Filter projects">${['All','Systems','Web','Research'].map(x=>`<button class="filter-button ${filter === x ? 'active' : ''}" data-filter="${x}" aria-pressed="${filter === x}">${x}</button>`).join('')}</div></div><div class="project-results">${projectCards(filter)}</div><p class="contact-links">${external(profile.github+'?tab=repositories','All repositories')} ${external('https://github.com/10adnan75/projects','Project archive source')}</p></section>`;
     }
     case 'research': return `<p class="boot-line">~/research</p><h2>Trust issues. Now with data.</h2><p class="muted">ML, databases, and sus reviews.</p>${projectCards('Research')}<p class="contact-links">${external(profile.github+'POLY-ALEX','Explore POLY-ALEX')} ${external('https://github.com/10adnan75/research','Research archive source')}</p>${chips(['projects','contact'])}`;
     case 'skills': return `<p class="boot-line">~/skills</p><h2>Skill issues? Working on it</h2><p class="muted">The usual suspects.</p><div class="tag-list">${['Java','Python','C++','C#','JavaScript','HTML & CSS','Linux','Git'].map(x=>`<span>${x}</span>`).join('')}</div><h3>Receipts</h3><div class="certificates"><div><a href="/img/java.JPG" target="_blank" rel="noopener"><img src="/img/java.JPG" alt="Java course certificate" loading="lazy">Object Oriented Programming in Java</a><p class="muted">Duke University & UC San Diego.</p></div><div><a href="/img/linux.JPG" target="_blank" rel="noopener"><img src="/img/linux.JPG" alt="Linux course certificate" loading="lazy">Open Source, Linux & Git</a><p class="muted">The Linux Foundation.</p></div><div><a href="/img/python.JPG" target="_blank" rel="noopener"><img src="/img/python.JPG" alt="Python course certificate" loading="lazy">Python programming</a><p class="muted">Programming foundations.</p></div></div>${chips(['projects','resume'])}`;
@@ -281,9 +282,10 @@ document.addEventListener('click',async event=>{
   const command=event.target.closest('[data-command]'); if(command){const parsed=parseCommand(command.dataset.command);if(viewMode==='desktop'&&routes.includes(parsed.name)){renderPage(parsed.name,parsed.args);}else{run(command.dataset.command);focusPrompt();}}
   const filter=event.target.closest('[data-filter]');
   if(filter){
-    const group=filter.closest('.project-filters');
-    const results=group.nextElementSibling;
-    results.innerHTML=projectCards(filter.dataset.filter);animateContent(results);
+    const view=filter.closest('.project-view');
+    const group=view.querySelector('.project-filters');
+    const results=view.querySelector('.project-results');
+    results.innerHTML=projectCards(filter.dataset.filter,view.querySelector('[data-project-search]').value);animateContent(results);
     group.querySelectorAll('[data-filter]').forEach(button=>{const selected=button===filter;button.classList.toggle('active',selected);button.setAttribute('aria-pressed',String(selected));});
     announce(`Showing ${filter.dataset.filter.toLowerCase()} projects.`);
   }
@@ -292,6 +294,14 @@ document.addEventListener('click',async event=>{
     try{await navigator.clipboard.writeText(profile.email);button.textContent='Email copied';announce('Email address copied.');}
     catch{button.textContent='Select the email above to copy';announce('Clipboard unavailable. Select and copy the email address above.');}
   }
+});
+document.addEventListener('input',event=>{
+  const search=event.target.closest('[data-project-search]');if(!search)return;
+  const view=search.closest('.project-view');
+  const active=view.querySelector('[data-filter].active')?.dataset.filter || 'All';
+  const results=view.querySelector('.project-results');
+  results.innerHTML=projectCards(active,search.value);animateContent(results);
+  announce(`Showing matching projects.`);
 });
 document.addEventListener('toggle',event=>{
   const story=event.target;

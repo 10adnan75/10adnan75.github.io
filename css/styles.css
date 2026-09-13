@@ -338,11 +338,13 @@ body:not(.simple-mode) .stage{min-height:0;height:100svh}
 
 .now-building{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;margin:20px 0;padding:14px 16px;background:linear-gradient(110deg,var(--surface),var(--chrome));border:1px solid var(--line);border-radius:10px;box-shadow:0 0 22px var(--glow)}
 .now-label{font:11px var(--mono);color:var(--accent)}.now-building h3{margin:0;font-size:16px}.now-building p{margin:3px 0 0;font-size:13px;color:var(--muted)}.now-building button{padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--accent);font:11px var(--mono)}
+.project-tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:20px 0}.project-tools .project-filters{margin:0}.project-search{width:min(240px,100%);min-height:40px;padding:0 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--control-radius);color:var(--text);font:13px var(--mono);outline:none}.project-search:focus{border-color:var(--accent);box-shadow:0 0 18px var(--glow)}.project-search::placeholder{color:var(--muted)}
 .project-shot{position:relative;display:block;width:100%;margin:-22px -22px 18px;width:calc(100% + 44px);padding:0;overflow:hidden;border-radius:11px 11px 0 0;background:#000;aspect-ratio:16/7}
 .project-shot img{display:block;width:100%;height:100%;object-fit:cover;opacity:.72;transition:transform .35s ease,opacity .35s ease}.project-shot span{position:absolute;left:14px;bottom:12px;padding:5px 8px;border-radius:5px;background:#000a;color:#fff;font:11px var(--mono)}
 .project-shot:hover img{transform:scale(1.04);opacity:.95}.project-card:has(.project-shot){padding-top:22px}
 .project-shot-static{cursor:default}.project-shot-static img{object-position:center}.availability{display:flex;gap:10px;align-items:center;margin:18px 0!important;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:13px}.availability span{font:11px var(--mono);color:var(--accent)}
 @media(max-width:600px){.now-building{grid-template-columns:1fr;gap:8px}.now-building button{justify-self:start}.project-shot{margin:-18px -18px 16px;width:calc(100% + 36px)}}
+@media(max-width:600px){.project-tools{align-items:stretch;flex-direction:column}.project-search{width:100%}}
 
 /* Brief boot sequence before the interactive workstation wakes up. */
 .boot-loader{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;gap:16px;background:var(--bg);color:var(--text);font:14px var(--mono);letter-spacing:.02em;transition:opacity .24s ease,visibility .24s ease}
