@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import {
   CSS3DRenderer,
   CSS3DObject,
@@ -23,6 +24,14 @@ export function createScene(terminal) {
   renderer.toneMappingExposure = 1.1;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // A small generated studio environment gives the metal its reflections.
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const room = new RoomEnvironment();
+  const environment = pmrem.fromScene(room, 0.04);
+  scene.environment = environment.texture;
+  scene.environmentIntensity = 0.95;
+  room.dispose();
+  pmrem.dispose();
   host.append(renderer.domElement);
   const htmlRenderer = new CSS3DRenderer();
   layer.replaceChildren(htmlRenderer.domElement);
@@ -339,6 +348,7 @@ export function createScene(terminal) {
     lightPool.visible = on;
     back.intensity = on ? 18 : 0;
     fill.intensity = on ? 3 : 0.35;
+    scene.environmentIntensity = on ? 0.95 : 0.12;
     key.intensity = on ? 3 : 0.7;
     ambient.intensity = on ? 1.6 : 0.8;
     terminal.dataset.reflections = on ? "on" : "off";
@@ -384,6 +394,7 @@ export function createScene(terminal) {
     materials.forEach((material) => material.dispose());
     keyTexture.dispose();
     lightTexture.dispose();
+    environment.dispose();
     renderer.dispose();
     renderer.domElement.remove();
     layer.append(terminal);
