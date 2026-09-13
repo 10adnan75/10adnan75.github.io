@@ -19,10 +19,17 @@ test("desktop: native typing, focus, window controls, navigation and power", asy
     "data-reflections",
     "on",
   );
+  const input = page.getByRole("textbox", { name: "Terminal command" });
+  await page.locator(".intro-copy").click();
+  await page.keyboard.type("h");
+  await expect(input).toHaveValue("h");
+  await input.fill("");
   await page.screenshot({ path: "test-results/desktop-home.png" });
   await page.getByRole("button", { name: "Boot me up" }).click();
-  const input = page.getByRole("textbox", { name: "Terminal command" });
   await expect(input).toBeFocused();
+  await input.press("Tab");
+  await expect(input).toBeFocused();
+  await expect(page.locator("#terminal-output")).toContainText('"matches"');
   await command(page, "projects");
   await expect(page).toHaveURL(/\/projects\/$/);
   await expect(page.locator(".project-card")).toHaveCount(0);
@@ -399,7 +406,7 @@ test("desktop view preserves terminal session and shares navigation, themes and 
 test("responsive audit: every page fits both views at narrow, tablet and landscape sizes", async ({
   page,
 }) => {
-  test.setTimeout(90000);
+  test.setTimeout(180000);
   for (const [width, height] of [
     [320, 640],
     [390, 844],
@@ -422,6 +429,7 @@ test("responsive audit: every page fits both views at narrow, tablet and landsca
       "resume",
     ]) {
       await page.goto(route === "home" ? "/" : `/${route}/`);
+      await expect(page.locator("#boot-loader")).toBeHidden();
       const header = await page.locator(".site-header").evaluate((el) =>
         [...el.children].map((child) => ({
           left: child.getBoundingClientRect().left,

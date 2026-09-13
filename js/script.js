@@ -642,22 +642,49 @@ $("#command-form").addEventListener("submit", (event) => {
   focusPrompt();
   syncCursor();
 });
+
+const completionChoices = [
+  ...commandNames,
+  ...themeNames.map((theme) => `theme ${theme}`),
+  "projects systems",
+  "projects web",
+  "projects research",
+];
+
+function commonPrefix(values) {
+  if (!values.length) return "";
+  return values.reduce((prefix, value) => {
+    let length = 0;
+    while (length < prefix.length && prefix[length] === value[length]) length++;
+    return prefix.slice(0, length);
+  });
+}
+
+function completeCommand() {
+  const value = input.value.trimStart().toLowerCase();
+  const matches = value
+    ? completionChoices.filter((command) => command.startsWith(value))
+    : commandNames;
+
+  if (!matches.length) {
+    append(jsonOutput({ matches: [], hint: "type help" }));
+  } else {
+    const completion = commonPrefix(matches);
+    if (completion.length > value.length) input.value = completion;
+    if (matches.length > 1) append(jsonOutput({ matches }));
+  }
+
+  input.setSelectionRange(input.value.length, input.value.length);
+  syncCursor();
+  focusPrompt();
+  announce(matches.length ? `Matches: ${matches.join(", ")}` : "No matches.");
+}
+
 input.addEventListener("keydown", (event) => {
-  if (event.key === "Tab" && !event.shiftKey && input.value.trim()) {
-    const value = input.value.toLowerCase();
-    const parts = value.split(" ");
-    const partial = parts.pop();
-    const matches = commandNames.filter((command) =>
-      command.startsWith(partial),
-    );
-    if (matches.length) {
-      event.preventDefault();
-      if (matches.length === 1) input.value = [...parts, matches[0]].join(" ");
-      else {
-        append(jsonOutput({ matches }));
-        announce(`Suggestions: ${matches.join(", ")}`);
-      }
-    }
+  if (event.key === "Tab" && !event.shiftKey) {
+    event.preventDefault();
+    completeCommand();
+    return;
   }
   if (event.key === "ArrowUp") {
     event.preventDefault();
@@ -674,6 +701,32 @@ input.addEventListener("keydown", (event) => {
     event.preventDefault();
     output.replaceChildren();
   }
+  syncCursor();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (
+    event.defaultPrevented ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey ||
+    event.key.length !== 1 ||
+    viewMode !== "terminal" ||
+    !poweredOn ||
+    windowState === "closed" ||
+    windowState === "minimized" ||
+    event.target.closest?.(
+      "input,textarea,select,button,a,[contenteditable=true]",
+    )
+  )
+    return;
+
+  event.preventDefault();
+  focusPrompt();
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? start;
+  input.value = `${input.value.slice(0, start)}${event.key}${input.value.slice(end)}`;
+  input.setSelectionRange(start + 1, start + 1);
   syncCursor();
 });
 document.addEventListener("click", async (event) => {
