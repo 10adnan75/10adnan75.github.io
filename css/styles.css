@@ -2509,6 +2509,16 @@ body.workspace-maximized {
 .terminal-window .input-mirror {
   height: 36px;
 }
+.input-mirror {
+  display: inline-flex;
+  width: max-content;
+  justify-content: flex-start;
+}
+#cursor-before,
+#cursor-after,
+.input-hint {
+  flex: none;
+}
 .input-hint {
   margin-left: 0.3ch;
   color: color-mix(in srgb, var(--muted) 92%, transparent);
