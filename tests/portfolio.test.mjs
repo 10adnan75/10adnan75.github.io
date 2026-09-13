@@ -59,29 +59,25 @@ test("terminal navigation, keyboard UX, filtering, and untrusted input", async (
   assert.match($("#terminal-output").textContent, /10adnan75/);
   run("cd /projects");
   assert.equal(window.location.pathname, "/projects/");
-  assert.equal(document.querySelectorAll(".project-card").length, 8);
-  $('[data-filter="Systems"]').click();
-  assert.equal(document.querySelectorAll(".project-card").length, 3);
-  assert.equal(
-    $('[data-filter="Systems"]').getAttribute("aria-pressed"),
-    "true",
-  );
+  assert.equal(document.querySelectorAll(".project-card").length, 0);
+  assert.match($("#terminal-output").textContent, /"count": 8/);
+  assert.match($("#terminal-output").textContent, /"projects":/);
   run("about");
   assert.equal(window.location.pathname, "/about/");
   assert.match($("#terminal-output").textContent, /Mazharuddin/);
   run("contact");
-  assert.equal(
-    $('a[href^="mailto:"]').getAttribute("href"),
-    "mailto:adnanmazharuddinshaikh@gmail.com",
+  assert.match(
+    $("#terminal-output").textContent,
+    /adnanmazharuddinshaikh@gmail.com/,
   );
   run("<img src=x onerror=alert(1)>");
   assert.equal($("#terminal-output img[onerror]"), null);
-  assert.match($("#terminal-output").textContent, /Command not found/);
+  assert.match($("#terminal-output").textContent, /command_not_found/);
   run("theme platinum");
   assert.equal($("#terminal").dataset.theme, "platinum");
   run("resume");
-  assert.ok($('#terminal-output a[href="/adnanmaz@usc.edu.pdf"]'));
-  assert.equal($('#terminal-output a[href="/ams_cv.pdf"]'), null);
+  assert.match($("#terminal-output").textContent, /adnanmaz@usc.edu.pdf/);
+  assert.doesNotMatch($("#terminal-output").textContent, /ams_cv.pdf/);
   const contentBeforePowerOff = $("#terminal-output").innerHTML;
   $("#monitor-power").click();
   assert.equal($("#monitor-power").getAttribute("aria-pressed"), "false");
@@ -98,22 +94,16 @@ test("terminal navigation, keyboard UX, filtering, and untrusted input", async (
   $("#command-input").value = "hello";
   $("#command-input").setSelectionRange(2, 2);
   $("#command-input").dispatchEvent(new window.Event("input"));
-  assert.equal($("#cursor-before").textContent, "he");
-  assert.equal($("#block-cursor").textContent, "l");
-  assert.equal($("#cursor-after").textContent, "lo");
-  assert.equal($("#input-hint").hidden, true);
+  assert.equal($("#terminal").classList.contains("has-command"), true);
+  assert.equal($("#command-input").placeholder, "hint: help for the lore");
+  assert.equal($("#typing-cursor").textContent, "l");
+  assert.equal($("#terminal").style.getPropertyValue("--caret-index"), "2");
   assert.equal(document.querySelector(".run-command"), null);
   assert.equal($("#command-form").parentElement, $("#terminal-scroll"));
   assert.equal($("#terminal-scroll").contains($("#command-form")), true);
   $("#command-input").blur();
   $("#terminal-scroll").click();
   assert.equal(document.activeElement, $("#command-input"));
-  // Command chips restore focus rather than leaving typing on a button.
-  const commandChip = document.querySelector('[data-command="projects"]');
-  commandChip.focus();
-  commandChip.click();
-  assert.equal(document.activeElement, $("#command-input"));
-  assert.equal(window.location.pathname, "/projects/");
   run("resume");
   assert.equal($("#scroll-enter"), null);
   assert.equal(document.querySelectorAll(".window-controls button").length, 3);
@@ -152,7 +142,7 @@ test("terminal navigation, keyboard UX, filtering, and untrusted input", async (
   assert.equal($("#terminal").dataset.windowState, "normal");
   assert.equal($("#command-input").value, "");
   assert.equal($("#terminal-window").inert, false);
-  assert.match($("#terminal-output").textContent, /recruiter edition/);
+  assert.match($("#terminal-output").textContent, /recruiter mode unlocked/);
   $("#window-close").click();
   $('[data-route="about"]').click();
   assert.equal($("#terminal").dataset.windowState, "normal");
@@ -177,10 +167,7 @@ test("terminal navigation, keyboard UX, filtering, and untrusted input", async (
   }
   run("clear");
   run("contact");
-  assert.equal(
-    document.querySelectorAll(".contact-links .social-icon").length,
-    5,
-  );
+  assert.equal(document.querySelectorAll(".contact-links").length, 0);
   run("clear");
   assert.equal($("#terminal-output").textContent, "");
   $("#command-input").value = "proj";
@@ -209,7 +196,7 @@ test("terminal navigation, keyboard UX, filtering, and untrusted input", async (
   );
   assert.equal($("#command-input").value, "projects");
   run("help");
-  assert.match($("#terminal-output").textContent, /Tab completes commands/);
+  assert.match($("#terminal-output").textContent, /"autocomplete": "tab"/);
   $('[data-route="home"]').click();
   assert.equal(window.location.pathname, "/");
   assert.match($("#terminal-output").textContent, /10adnan75/);

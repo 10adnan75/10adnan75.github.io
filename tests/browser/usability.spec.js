@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 async function command(page, text) {
-  const input = page.getByRole("combobox", { name: "Terminal command" });
+  const input = page.getByRole("textbox", { name: "Terminal command" });
   await input.fill(text);
   await input.press("Enter");
 }
@@ -21,16 +21,15 @@ test("desktop: native typing, focus, window controls, navigation and power", asy
   );
   await page.screenshot({ path: "test-results/desktop-home.png" });
   await page.getByRole("button", { name: "Boot me up" }).click();
-  const input = page.getByRole("combobox", { name: "Terminal command" });
+  const input = page.getByRole("textbox", { name: "Terminal command" });
   await expect(input).toBeFocused();
   await command(page, "projects");
   await expect(page).toHaveURL(/\/projects\/$/);
-  await expect(page.locator(".project-card")).toHaveCount(8);
+  await expect(page.locator(".project-card")).toHaveCount(0);
+  await expect(page.locator("#terminal-output")).toContainText('"count": 8');
   await expect(input).toBeInViewport({ ratio: 0.99 });
-  await page.getByRole("button", { name: "Systems", exact: true }).click();
-  await expect(page.locator(".project-card")).toHaveCount(3);
   await command(page, "help");
-  await expect(page.locator("#terminal-output")).toContainText("Command menu");
+  await expect(page.locator("#terminal-output")).toContainText('"commands"');
   await expect(input).toBeInViewport({ ratio: 0.99 });
   await input.fill("proj");
   await input.press("Tab");
@@ -93,9 +92,8 @@ test("desktop: native typing, focus, window controls, navigation and power", asy
   await expect(input).toBeFocused();
   await expect(input).toHaveValue("draft");
   await command(page, "contact");
-  await page.getByRole("button", { name: "Copy email", exact: true }).click();
-  await expect(page.locator(".copy-email").last()).toHaveText(
-    /Email copied|Select the email/,
+  await expect(page.locator("#terminal-output")).toContainText(
+    "adnanmazharuddinshaikh@gmail.com",
   );
   await page.getByRole("button", { name: "Close Terminal" }).click();
   await expect(page.locator("#terminal-window")).toBeHidden();
@@ -104,7 +102,7 @@ test("desktop: native typing, focus, window controls, navigation and power", asy
     .click();
   await expect(input).toHaveValue("");
   await expect(page.locator("#terminal-output")).toContainText(
-    "Slide into my inbox",
+    "adnanmazharuddinshaikh@gmail.com",
   );
   await page
     .getByRole("navigation")
@@ -113,9 +111,9 @@ test("desktop: native typing, focus, window controls, navigation and power", asy
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
   await page.getByRole("button", { name: "Boot me up" }).click();
-  await page.locator(".welcome-copy").click();
+  await page.locator("#terminal-scroll").click();
   await expect(input).toBeFocused();
-  await page.getByRole("button", { name: "about", exact: true }).click();
+  await command(page, "about");
   await expect(input).toBeFocused();
   await page.goBack();
   await expect(page).toHaveURL(/\/$/);
@@ -137,12 +135,14 @@ test("mobile: all pages, direct reload, controls and no horizontal overflow", as
     "resume",
   ]) {
     await page.goto(`/${route}/`);
-    await expect(page.locator("#terminal-output h2").first()).toBeVisible();
+    await expect(
+      page.locator("#terminal-output .cli-json").first(),
+    ).toBeVisible();
     await page
-      .getByRole("combobox", { name: "Terminal command" })
+      .getByRole("textbox", { name: "Terminal command" })
       .scrollIntoViewIfNeeded();
     await expect(
-      page.getByRole("combobox", { name: "Terminal command" }),
+      page.getByRole("textbox", { name: "Terminal command" }),
     ).toBeInViewport({ ratio: 0.99 });
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth,
@@ -161,7 +161,7 @@ test("mobile: all pages, direct reload, controls and no horizontal overflow", as
     .getByRole("button", { name: "Restore Terminal", exact: true })
     .click();
   await expect(
-    page.getByRole("combobox", { name: "Terminal command" }),
+    page.getByRole("textbox", { name: "Terminal command" }),
   ).toBeFocused();
   // Responsive remounts must not disable or orphan the real input.
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -187,7 +187,7 @@ test("WebGL unavailable: normal navigation and keyboard still work", async ({
   await expect(page.locator("body")).toHaveClass(/simple-mode/);
   await page.getByRole("button", { name: "Boot me up" }).click();
   await command(page, "projects");
-  await expect(page.locator(".project-card")).toHaveCount(8);
+  await expect(page.locator("#terminal-output")).toContainText('"count": 8');
 });
 
 test("scrollback, theme persistence and maximized power controls", async ({
@@ -198,7 +198,7 @@ test("scrollback, theme persistence and maximized power controls", async ({
   await command(page, "sudo");
   await command(page, "football");
   await expect(page.locator("#terminal-output")).toContainText(
-    "My trust issues have root access.",
+    "trust issues have root",
   );
   const geometry = await page.evaluate(() => ({
     output: document.querySelector("#terminal-output").getBoundingClientRect()
@@ -229,11 +229,12 @@ test("scrollback, theme persistence and maximized power controls", async ({
   await expect(page.locator("body")).not.toHaveClass(/workspace-maximized/);
 });
 
-test("case studies and command suggestions work by keyboard and touch", async ({
+test("desktop case studies and CLI completion work by keyboard and touch", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/projects/");
+  await page.getByRole("button", { name: "Switch to desktop view" }).click();
   const story = page.locator(".project-story").first();
   await story.locator("summary").click();
   await expect(story).toHaveAttribute("open", "");
@@ -242,23 +243,16 @@ test("case studies and command suggestions work by keyboard and touch", async ({
     "href",
     "https://github.com/10adnan75/shell#readme",
   );
-  const input = page.getByRole("combobox", { name: "Terminal command" });
-  await input.fill("theme ");
-  await expect(page.getByRole("option")).toHaveCount(7);
-  await expect(input).toBeInViewport({ ratio: 0.99 });
-  await input.press("ArrowDown");
-  await input.press("ArrowDown");
-  await input.press("Enter");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "graphite");
+  await page.getByRole("button", { name: "Switch to terminal view" }).click();
+  const input = page.getByRole("textbox", { name: "Terminal command" });
   await input.fill("pro");
-  await input.press("Escape");
-  await expect(page.locator("#command-suggestions")).toBeHidden();
-  await input.fill("cont");
-  await page.getByRole("option", { name: "contact", exact: true }).click();
-  await expect(input).toHaveValue("contact");
-  await expect(input).toBeFocused();
+  await input.press("Tab");
+  await expect(input).toHaveValue("projects");
+  await expect(input).toBeInViewport({ ratio: 0.99 });
+  await expect(page.locator(".idle-cursor")).toBeHidden();
+  await expect(page.locator("#typing-cursor")).toBeVisible();
   await input.press("Enter");
-  await expect(page).toHaveURL(/contact/);
+  await expect(page.locator("#terminal-output")).toContainText('"count": 8');
   await expect(page.locator("body")).not.toContainText("—");
 });
 
@@ -266,6 +260,7 @@ test("project snapshots and currently building stay useful", async ({
   page,
 }) => {
   await page.goto("/projects/");
+  await page.getByRole("button", { name: "Switch to desktop view" }).click();
   await expect(page.locator(".now-building")).toContainText(
     "Polynomial Learned Index",
   );
@@ -273,12 +268,14 @@ test("project snapshots and currently building stay useful", async ({
   await page.locator(".now-building button").click();
   await expect(page).toHaveURL(/research/);
   await page.goto("/projects/");
+  await page.getByRole("button", { name: "Switch to desktop view" }).click();
   await page.locator(".project-shot[data-preview]").first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
 });
 
 test("project search works with category filters", async ({ page }) => {
   await page.goto("/projects/");
+  await page.getByRole("button", { name: "Switch to desktop view" }).click();
   const search = page.locator("[data-project-search]");
   await search.fill("server");
   await expect(page.locator(".project-card")).toHaveCount(2);
@@ -309,13 +306,9 @@ test("new theme palettes apply, persist and work from the picker", async ({
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "ember");
   await command(page, "theme");
-  await expect(page.locator(".theme-choice")).toHaveCount(7);
-  await page.locator(".theme-matrix").click();
+  await expect(page.locator("#terminal-output")).toContainText('"themes"');
+  await command(page, "theme matrix");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "matrix");
-  await expect(page.locator(".theme-matrix")).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
 });
 
 test("desktop view preserves terminal session and shares navigation, themes and previews", async ({
@@ -379,8 +372,15 @@ test("desktop view preserves terminal session and shares navigation, themes and 
   );
   await page.getByRole("button", { name: "Turn screen on" }).click();
   await expect(page.locator("#desktop-view")).toBeVisible();
+  await page.getByRole("button", { name: "Minimize Desktop" }).click();
+  await expect(page.locator("#desktop-message")).toHaveText(
+    "Desktop minimized",
+  );
+  await expect(page.locator("#dock-app-label")).toHaveText("Desktop");
+  await expect(page.locator("#dock-app-icon svg")).toBeVisible();
+  await page.getByRole("button", { name: "Restore Desktop" }).click();
   await page
-    .getByRole("button", { name: "Maximize Terminal", exact: true })
+    .getByRole("button", { name: "Maximize Desktop", exact: true })
     .click();
   await expect(page.locator("#desktop-view")).toBeVisible();
   expect(
@@ -388,6 +388,12 @@ test("desktop view preserves terminal session and shares navigation, themes and 
       () => document.documentElement.scrollWidth > innerWidth,
     ),
   ).toBe(false);
+  await page.getByRole("button", { name: "Restore window size" }).click();
+  await page.getByRole("button", { name: "Close Desktop" }).click();
+  await expect(page.locator("#desktop-message")).toHaveText("Desktop closed");
+  await expect(
+    page.getByRole("button", { name: "Open Desktop" }),
+  ).toBeVisible();
 });
 
 test("responsive audit: every page fits both views at narrow, tablet and landscape sizes", async ({

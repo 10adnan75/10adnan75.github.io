@@ -2510,14 +2510,111 @@ body.workspace-maximized {
   height: 36px;
 }
 .input-mirror {
-  display: inline-flex;
-  width: max-content;
-  justify-content: flex-start;
+  display: block;
+  width: auto;
+  z-index: 1;
 }
 #cursor-before,
 #cursor-after,
 .input-hint {
+  display: inline;
+}
+#command-input {
+  z-index: 0;
+}
+.terminal.has-command #command-input {
+  color: var(--text);
+  caret-color: var(--accent);
+}
+.terminal.has-command #cursor-before,
+.terminal.has-command #cursor-after {
+  visibility: hidden;
+}
+.cli-json {
+  margin: 0;
+  color: var(--text);
+  font:
+    14px/1.7 Menlo,
+    Monaco,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+.output-block .cli-json {
+  margin-bottom: 2px;
+}
+.terminal-window .command-field {
+  display: flex;
+  align-items: center;
+  gap: 0.55ch;
+  overflow: hidden;
+}
+.idle-cursor {
+  width: 0.72em;
+  height: 1.15em;
   flex: none;
+  background: var(--accent);
+  animation: cursor-pulse 1.1s steps(1, end) infinite;
+}
+.terminal.has-command .idle-cursor {
+  display: none;
+}
+.typing-cursor {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--caret-index, 0) * 1ch - var(--input-scroll, 0px));
+  z-index: 2;
+  display: none;
+  width: 1ch;
+  height: 1.15em;
+  color: var(--panel);
+  background: var(--accent);
+  font:
+    14px/1.15 Menlo,
+    Monaco,
+    monospace;
+  text-align: center;
+  pointer-events: none;
+  translate: 0 -50%;
+  animation: cursor-pulse 1.1s steps(1, end) infinite;
+}
+.terminal.has-command .typing-cursor {
+  display: block;
+}
+.terminal-window #command-input,
+.terminal.has-command #command-input {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  height: 36px;
+  padding: 0;
+  color: var(--text);
+  caret-color: transparent;
+  font:
+    14px/36px Menlo,
+    Monaco,
+    monospace;
+}
+.terminal-window #command-input::placeholder {
+  color: var(--muted);
+  opacity: 0.88;
+}
+.terminal:not(.has-command) #command-input {
+  caret-color: transparent;
+}
+.dock-desktop-icon {
+  color: var(--text);
+}
+.dock-desktop-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .input-hint {
   margin-left: 0.3ch;
@@ -2717,36 +2814,6 @@ body.workspace-maximized {
 .story-flow b {
   font-weight: 400;
   color: var(--muted);
-}
-.command-suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin: 8px 0 12px;
-  padding: 4px 0;
-  font: 12px var(--mono);
-}
-.command-suggestions[hidden] {
-  display: none;
-}
-.command-suggestions [role="option"] {
-  cursor: pointer;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: var(--muted);
-  transition:
-    background 0.2s,
-    color 0.2s,
-    box-shadow 0.2s;
-}
-.command-suggestions [role="option"]:hover,
-.command-suggestions [aria-selected="true"] {
-  color: var(--text);
-  background: var(--chrome);
-  border-color: var(--accent);
-  box-shadow: 0 0 18px var(--glow);
 }
 .terminal-window .command-chips button,
 .filter-button,

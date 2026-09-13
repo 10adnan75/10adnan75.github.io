@@ -171,18 +171,7 @@
                         ><span class="sr-only"> Enter a command</span></label
                       >
                       <div class="command-field">
-                        <div class="input-mirror" aria-hidden="true">
-                          <span id="cursor-before"></span
-                          ><span class="block-cursor" id="block-cursor"
-                            >&nbsp;</span
-                          ><span id="cursor-after"></span
-                          ><span class="input-hint" id="input-hint">
-                            <span>hint:</span> <strong>help</strong
-                            ><span class="hint-detail">
-                              for the lore</span
-                            ></span
-                          >
-                        </div>
+                        <span class="idle-cursor" aria-hidden="true"></span>
                         <input
                           id="command-input"
                           name="command"
@@ -191,9 +180,16 @@
                           autocapitalize="off"
                           autocomplete="off"
                           aria-label="Terminal command"
+                          placeholder="hint: help for the lore"
                           enterkeyhint="go"
                           maxlength="200"
                         />
+                        <span
+                          class="typing-cursor"
+                          id="typing-cursor"
+                          aria-hidden="true"
+                          >&nbsp;</span
+                        >
                       </div>
                     </form>
                   </div>
@@ -237,9 +233,14 @@
                     aria-label="Open Terminal"
                     title="Terminal"
                   >
-                    <span class="dock-terminal-icon" aria-hidden="true"
+                    <span
+                      class="dock-terminal-icon"
+                      id="dock-app-icon"
+                      aria-hidden="true"
                       >&gt;_</span
-                    ><span class="dock-label">Terminal</span>
+                    ><span class="dock-label" id="dock-app-label"
+                      >Terminal</span
+                    >
                   </button>
                 </div>
               </div>

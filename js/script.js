@@ -1,6 +1,5 @@
 import { themes, themeNames } from "./themes.js";
 import { stories } from "./project-stories.js";
-import { attachSuggestions } from "./suggestions.js";
 import { icon, brandForUrl } from "./icons.js";
 import {
   profile,
@@ -48,11 +47,36 @@ const external = (url, label) =>
   `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${icon(brandForUrl(url))}${label}</a>`;
 const chips = (commands) =>
   `<div class="command-chips">${commands.map((command) => `<button data-command="${command}">${command}</button>`).join("")}</div>`;
+const jsonOutput = (value) =>
+  `<pre class="cli-json">${escapeHtml(JSON.stringify(value, null, 2))}</pre>`;
 
 let poweredOn = true;
 let windowState = "normal";
 let restoreMaximized = false;
 const terminalWindow = $("#terminal-window");
+function syncWindowIdentity() {
+  const app = viewMode === "desktop" ? "Desktop" : "Terminal";
+  const hidden = windowState === "closed" || windowState === "minimized";
+  $("#desktop-message").textContent = `${app} ${windowState}`;
+  $("#restore-terminal").setAttribute(
+    "aria-label",
+    windowState === "minimized" ? `Restore ${app}` : `Open ${app}`,
+  );
+  $("#restore-terminal").title = app;
+  $("#dock-app-label").textContent = app;
+  $("#dock-app-icon").innerHTML =
+    app === "Desktop"
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 8v10M10.5 11h7M10.5 14h5"/><path d="M9 21h6"/></svg>'
+      : "&gt;_";
+  $("#dock-app-icon").classList.toggle("dock-desktop-icon", app === "Desktop");
+  $("#window-close").setAttribute("aria-label", `Close ${app}`);
+  $("#window-minimize").setAttribute("aria-label", `Minimize ${app}`);
+  $("#window-maximize").setAttribute(
+    "aria-label",
+    windowState === "maximized" ? "Restore window size" : `Maximize ${app}`,
+  );
+  $("#desktop-hint").hidden = !hidden;
+}
 function focusPrompt() {
   if (
     viewMode === "desktop" ||
@@ -91,38 +115,33 @@ function setWindowState(next, focus = true) {
   terminalWindow.inert = hidden;
   terminalWindow.setAttribute("aria-hidden", String(hidden));
   input.disabled = hidden;
-  $("#desktop-hint").hidden = !hidden;
-  $("#desktop-message").textContent =
-    next === "closed" ? "Terminal closed" : "Terminal minimized";
-  $("#restore-terminal").setAttribute(
-    "aria-label",
-    next === "minimized" ? "Restore Terminal" : "Open Terminal",
-  );
+  syncWindowIdentity();
   $("#window-maximize").setAttribute(
     "aria-pressed",
     String(next === "maximized"),
   );
-  $("#window-maximize").setAttribute(
-    "aria-label",
-    next === "maximized" ? "Restore window size" : "Maximize Terminal",
-  );
   $("#window-maximize").title = next === "maximized" ? "Restore" : "Maximize";
   if (hidden && focus) $("#restore-terminal").focus({ preventScroll: true });
   else if (focus) focusPrompt();
-  if (previous !== next) announce(`Terminal ${next}`);
+  if (previous !== next)
+    announce(`${viewMode === "desktop" ? "Desktop" : "Terminal"} ${next}`);
 }
 function restoreTerminal(focus = true) {
   if (!poweredOn) return;
   if (windowState === "closed") {
-    commandHistory = [];
-    historyIndex = 0;
-    draft = "";
-    input.value = "";
-    output.innerHTML = pageContent(
-      location.pathname.split("/").filter(Boolean)[0] || "home",
-    );
-    scroller.scrollTop = 0;
-    syncCursor();
+    if (viewMode === "desktop") {
+      renderDesktop(terminalRoute);
+    } else {
+      commandHistory = [];
+      historyIndex = 0;
+      draft = "";
+      input.value = "";
+      output.innerHTML = terminalContent(
+        location.pathname.split("/").filter(Boolean)[0] || "home",
+      );
+      scroller.scrollTop = 0;
+      syncCursor();
+    }
   }
   if (windowState === "closed" || windowState === "minimized")
     setWindowState(restoreMaximized ? "maximized" : "normal", focus);
@@ -175,20 +194,16 @@ $("#monitor-power").addEventListener("click", () => {
 function syncCursor() {
   if (!input.isConnected) return;
   const position = input.selectionStart ?? input.value.length;
-  $("#cursor-before").textContent = input.value.slice(0, position);
-  $("#block-cursor").textContent = input.value[position] || "\u00a0";
-  $("#cursor-after").textContent = input.value.slice(position + 1);
-  $("#input-hint").hidden = Boolean(input.value);
-  $(".input-mirror").style.transform = `translateX(${-input.scrollLeft}px)`;
+  terminal.classList.toggle("has-command", Boolean(input.value));
+  terminal.style.setProperty("--caret-index", position);
+  terminal.style.setProperty("--input-scroll", `${input.scrollLeft}px`);
+  $("#typing-cursor").textContent = input.value[position] || "\u00a0";
 }
 ["input", "keyup", "click", "select", "scroll", "focus"].forEach((type) =>
   input.addEventListener(type, syncCursor),
 );
 input.addEventListener("keydown", () => queueMicrotask(syncCursor));
 
-function home() {
-  return `<h2 class="welcome-title">10adnan75</h2><p class="welcome-copy">I'm Adnan. Code, bugs, occasional grass.</p>${chips(["about", "projects", "research", "contact"])}<p class="muted">Type <span class="accent">help</span>. No sudo required.</p>`;
-}
 function applyTheme(theme) {
   if (!themeNames.includes(theme)) return;
   terminal.dataset.theme = theme;
@@ -245,7 +260,6 @@ function setView(mode) {
   if (!poweredOn) return;
   if (mode === "desktop") {
     terminalRoute = location.pathname.split("/").filter(Boolean)[0] || "home";
-    suggestions.hide();
     viewMode = mode;
     renderDesktop(terminalRoute);
   } else {
@@ -263,6 +277,7 @@ function setView(mode) {
   );
   $("#view-switch").setAttribute("aria-pressed", String(mode === "desktop"));
   $(".shell-name").textContent = mode === "desktop" ? " Finder" : " zsh";
+  syncWindowIdentity();
   if (mode === "terminal") focusPrompt();
   else $("#desktop-scroll").focus({ preventScroll: true });
   announce(`${mode} view.`);
@@ -348,7 +363,7 @@ function nowBuilding() {
 function pageContent(route, args = []) {
   switch (route) {
     case "home":
-      return home();
+      return `<p class="boot-line">Your desktop. Your rules.</p><h2>Pick a side quest.</h2><p class="muted">Same human. Less typing.</p>`;
     case "about":
       return `<p class="boot-line">~/about</p><div class="about-grid"><div><h2>Meet the source of the bugs</h2><p>${profile.name}. Developer. Footballer.</p><p>Community college roots. Coding since 2016. Python blogs since 2020.</p><p class="muted">Dating the debugger. It’s complicated.</p></div><img class="avatar" src="/img/avataaars.svg" alt="Adnan's illustrated avatar"></div><div class="tag-list">${["Python", "Java", "C++", "C#", "JavaScript", "Linux", "Git"].map((x) => `<span>${x}</span>`).join("")}</div><p>${external(profile.resume, "Résumé")}</p>${chips(["skills", "projects", "contact"])}`;
     case "projects": {
@@ -370,6 +385,79 @@ function pageContent(route, args = []) {
       return `<h2>Directory not found</h2><p>404. This page ghosted.</p>${chips(["home", "about", "projects", "contact"])}`;
   }
 }
+
+function terminalContent(route, args = []) {
+  const requestedFilter = args.join(" ").toLowerCase();
+  const filteredProjects = projects.filter(
+    (project) =>
+      !requestedFilter || project.category.toLowerCase() === requestedFilter,
+  );
+
+  const pages = {
+    home: {
+      status: "online",
+      user: "10adnan75",
+      bio: "code, bugs, occasional grass",
+      next: ["help", "about", "projects", "research", "contact"],
+    },
+    about: {
+      name: profile.name,
+      role: "software developer",
+      since: 2016,
+      stack: ["Python", "Java", "C++", "C#", "JavaScript", "Linux", "Git"],
+      lore: "dating the debugger. it is complicated.",
+    },
+    projects: {
+      count: filteredProjects.length,
+      filter: requestedFilter || "all",
+      projects: filteredProjects.map(
+        ({ name, repo, category, stack, description }) => ({
+          name,
+          category: category.toLowerCase(),
+          stack,
+          description,
+          source: `${profile.github}${repo}`,
+        }),
+      ),
+    },
+    research: {
+      count: projects.filter((project) => project.category === "Research")
+        .length,
+      projects: projects
+        .filter((project) => project.category === "Research")
+        .map(({ name, repo, stack, description }) => ({
+          name,
+          stack,
+          description,
+          source: `${profile.github}${repo}`,
+        })),
+    },
+    skills: {
+      languages: ["Java", "Python", "C++", "C#", "JavaScript"],
+      tools: ["Linux", "Git", "HTML", "CSS"],
+      receipts: ["java.JPG", "linux.JPG", "python.JPG"],
+    },
+    contact: {
+      email: profile.email,
+      github: profile.github,
+      linkedin: profile.linkedin,
+      stackoverflow: profile.stackoverflow,
+      leetcode: profile.leetcode,
+    },
+    resume: {
+      file: profile.resume,
+      status: "recruiter mode unlocked",
+    },
+    404: {
+      error: "directory_not_found",
+      status: 404,
+      hint: "try help",
+    },
+  };
+
+  return jsonOutput(pages[route] || pages[404]);
+}
+
 function setRoute(route, push = true) {
   const valid = routes.includes(route);
   const page = valid ? route : "404";
@@ -405,7 +493,7 @@ function renderPage(route, args = [], push = true) {
   if (viewMode === "desktop") {
     renderDesktop(page, args);
   } else {
-    output.innerHTML = pageContent(page, args);
+    output.innerHTML = terminalContent(page, args);
     animateContent();
     scroller.scrollTop = 0;
   }
@@ -447,7 +535,6 @@ function run(raw) {
     windowState === "minimized"
   )
     return;
-  suggestions.hide();
   commandHistory.push(raw);
   if (commandHistory.length > 100) commandHistory.shift();
   historyIndex = commandHistory.length;
@@ -458,7 +545,7 @@ function run(raw) {
   if (routes.includes(name)) {
     const page = setRoute(name);
     append(
-      `<div class="echo">lurker@10adnan75 ~ ❯ ${escapeHtml(raw)}</div>${pageContent(page, args)}`,
+      `<div class="echo">lurker@10adnan75 ~ ❯ ${escapeHtml(raw)}</div>${terminalContent(page, args)}`,
     );
     announce(`${page} opened.`);
     return;
@@ -466,50 +553,81 @@ function run(raw) {
   let result = "";
   switch (name) {
     case "help":
-      result = `<h3>Command menu</h3><div class="help-grid"><code>about, whoami</code><span>The lore</span><code>projects [web]</code><span>Filter: systems, web, research</span><code>research</code><span>Research rabbit holes</span><code>skills</code><span>Skills & receipts</span><code>contact</code><span>Say hey</span><code>resume</code><span>The résumé PDF</span><code>ls</code><span>Browse pages</span><code>theme [name]</code><span>Pick your vibe. Type theme.</span><code>history, clear</code><span>Recall or reset</span><code>home</code><span>Return to the start</span><code>football</code><span>Grass-touching lore</span></div><p class="muted">Also try <span class="accent">cd /projects</span> or <span class="accent">cat about.md</span>.<br>Tab completes commands. ↑↓ recalls history. Ctrl+L clears output.</p>`;
+      result = jsonOutput({
+        commands: {
+          about: "the lore",
+          projects: "projects [systems|web|research]",
+          research: "research rabbit holes",
+          skills: "skills and receipts",
+          contact: "say hey",
+          resume: "resume pdf",
+          socials: "the links",
+          theme: `theme [${themeNames.join("|")}]`,
+          history: "command history",
+          clear: "clear terminal",
+          home: "return home",
+          football: "grass lore",
+        },
+        shortcuts: {
+          autocomplete: "tab",
+          history: "arrow up or down",
+          clear: "ctrl+l",
+        },
+      });
       break;
     case "ls":
-      result = chips([
-        "about",
-        "projects",
-        "research",
-        "skills",
-        "contact",
-        "resume",
-      ]);
+      result = jsonOutput({
+        directories: routes.filter((route) => route !== "home"),
+      });
       break;
     case "socials":
-      result = `<div class="contact-links">${external(profile.github, "GitHub")}${external(profile.linkedin, "LinkedIn")}${external(profile.stackoverflow, "Stack Overflow")}${external(profile.leetcode, "LeetCode")}</div>`;
+      result = jsonOutput({
+        github: profile.github,
+        linkedin: profile.linkedin,
+        stackoverflow: profile.stackoverflow,
+        leetcode: profile.leetcode,
+      });
       break;
     case "clear":
       output.replaceChildren();
       announce("Terminal cleared.");
       return;
     case "history":
-      result = commandHistory
-        .map(
-          (command, i) => `<div>${i + 1} &nbsp; ${escapeHtml(command)}</div>`,
-        )
-        .join("");
+      result = jsonOutput({ history: commandHistory });
       break;
     case "theme": {
       const theme = args[0]?.toLowerCase();
       if (themeNames.includes(theme)) {
         applyTheme(theme);
-        result = `<p>Theme set to ${theme}.</p>`;
-      } else
-        result = `<p>Pick your vibe.</p><div class="theme-picker">${themes.map((item) => `<button data-command="theme ${item.name}" class="theme-choice theme-${item.name}" aria-pressed="${terminal.dataset.theme === item.name}"><span>${item.name}</span><small>${item.label}</small></button>`).join("")}</div>`;
+        result = jsonOutput({ theme, status: "applied" });
+      } else {
+        result = jsonOutput({
+          active: terminal.dataset.theme,
+          themes: themes.map(({ name, label }) => ({ name, label })),
+          usage: "theme <name>",
+        });
+      }
       break;
     }
     case "football":
-      result =
-        "<h3>Grass: touched</h3><p>Football is my other runtime. Still chasing bugs. Different pitch.</p>";
+      result = jsonOutput({
+        grass: "touched",
+        runtime: "football",
+        bugs: "still chasing",
+      });
       break;
     case "sudo":
-      result = "<p>Permission denied. My trust issues have root access.</p>";
+      result = jsonOutput({
+        error: "permission_denied",
+        reason: "trust issues have root",
+      });
       break;
     default:
-      result = `<p>Command not found: <span class="accent">${escapeHtml(name)}</span></p><p class="muted">Lost? Type <span class="accent">help</span>.</p>`;
+      result = jsonOutput({
+        error: "command_not_found",
+        command: name,
+        hint: "type help",
+      });
   }
   append(
     `<div class="echo">lurker@10adnan75 ~ ❯ ${escapeHtml(raw)}</div>${result}`,
@@ -518,12 +636,6 @@ function run(raw) {
     `${name === "help" ? "Command help displayed" : "Command completed"}.`,
   );
 }
-const suggestions = attachSuggestions(
-  input,
-  $("#command-form"),
-  commandNames,
-  syncCursor,
-);
 $("#command-form").addEventListener("submit", (event) => {
   event.preventDefault();
   run(input.value);
@@ -542,7 +654,7 @@ input.addEventListener("keydown", (event) => {
       event.preventDefault();
       if (matches.length === 1) input.value = [...parts, matches[0]].join(" ");
       else {
-        append(`<p class="muted">${matches.join(" &nbsp; ")}.</p>`);
+        append(jsonOutput({ matches }));
         announce(`Suggestions: ${matches.join(", ")}`);
       }
     }
