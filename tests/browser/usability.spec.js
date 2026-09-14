@@ -17,7 +17,7 @@ test("terminal hints rotate while idle and pause during typing", async ({
     .not.toBe(firstHint);
   await input.fill("projects");
   const pausedHint = await input.getAttribute("placeholder");
-  await page.waitForTimeout(3400);
+  await page.waitForTimeout(4400);
   await expect(input).toHaveAttribute("placeholder", pausedHint);
 });
 
@@ -158,6 +158,8 @@ test("mobile: all pages, direct reload, controls and no horizontal overflow", as
     await page.goto(`/${route}/`);
     await expect(page.locator("#computer-scene canvas")).toBeVisible();
     await expect(page.locator("body")).not.toHaveClass(/simple-mode/);
+    await page.getByRole("button", { name: "Open terminal" }).click();
+    await expect(page.locator("body")).toHaveClass(/workspace-maximized/);
     await expect(
       page.locator("#terminal-output .cli-json").first(),
     ).toBeVisible();
@@ -173,6 +175,7 @@ test("mobile: all pages, direct reload, controls and no horizontal overflow", as
     expect(overflow, route).toBe(false);
   }
   await page.goto("/projects/");
+  await page.getByRole("button", { name: "Open terminal" }).click();
   await page.screenshot({
     path: "test-results/mobile-projects.png",
     fullPage: true,
@@ -186,6 +189,7 @@ test("mobile: all pages, direct reload, controls and no horizontal overflow", as
   await expect(
     page.getByRole("textbox", { name: "Terminal command" }),
   ).toBeFocused();
+  await page.getByRole("button", { name: "Restore window size" }).click();
   // Responsive remounts must not disable or orphan the real input.
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(page.locator("#computer-scene canvas")).toBeVisible();
@@ -486,6 +490,12 @@ test("responsive audit: every page fits both views at narrow, tablet and landsca
           .evaluate((el) => el.scrollWidth > el.clientWidth + 1),
         `${width} ${route} terminal`,
       ).toBe(false);
+      if (width <= 600)
+        await page
+          .getByRole("button", {
+            name: route === "home" ? "Boot me up" : "Open terminal",
+          })
+          .click();
       await page
         .getByRole("button", { name: "Switch to desktop view" })
         .click();

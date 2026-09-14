@@ -2385,6 +2385,14 @@ body.workspace-maximized {
 .workspace-maximized .stage {
   overflow: visible;
 }
+.workspace-maximized .stage::before,
+.workspace-maximized .stage::after,
+.workspace-maximized .background-type {
+  display: none;
+}
+.workspace-maximized .intro {
+  visibility: hidden;
+}
 .workspace-maximized #terminal-layer {
   position: fixed !important;
   inset: 78px 16px 76px !important;
@@ -2502,18 +2510,11 @@ body.workspace-maximized {
 }
 @keyframes cursor-pulse {
   0%,
-  49% {
-    opacity: 1;
-    color: #000;
-    background: #fff;
-    box-shadow: none;
-  }
-  50%,
   100% {
-    opacity: 1;
-    color: #fff;
-    background: #000;
-    box-shadow: none;
+    opacity: 0.96;
+  }
+  50% {
+    opacity: 0.18;
   }
 }
 .command-field:not(:focus-within) .block-cursor {
@@ -2623,8 +2624,9 @@ body.workspace-maximized {
   height: 1.15em;
   flex: none;
   border-radius: 0;
+  color: var(--panel);
   background: var(--accent);
-  animation: cursor-pulse 1.06s steps(1, end) infinite;
+  animation: cursor-pulse 1.2s ease-in-out infinite;
 }
 .terminal.has-command .idle-cursor {
   display: none;
@@ -2647,7 +2649,7 @@ body.workspace-maximized {
   pointer-events: none;
   translate: 0 -50%;
   border-radius: 0;
-  animation: cursor-pulse 1.06s steps(1, end) infinite;
+  animation: cursor-pulse 1.2s ease-in-out infinite;
 }
 .terminal.has-command .typing-cursor {
   display: block;

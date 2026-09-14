@@ -67,7 +67,7 @@ const routeIntros = {
     "ABOUT.JSON",
     "Main character.",
     "Patch notes included.",
-    "Code, football, questionable sleep.",
+    "MS CS @ USC. United States of America.",
   ],
   projects: [
     "PROJECTS.JSON",
@@ -291,7 +291,7 @@ function rotateTerminalHint() {
     input.classList.remove("hint-swapping");
   }, 140);
 }
-window.setInterval(rotateTerminalHint, 3200);
+window.setInterval(rotateTerminalHint, 4200);
 
 function applyTheme(theme) {
   if (!themeNames.includes(theme)) return;
@@ -596,15 +596,20 @@ function renderPage(route, args = [], push = true) {
   announce(`${page} page opened.`);
 }
 function enterTerminal(focus = true) {
-  if (document.body.classList.contains("simple-mode"))
+  setPower(true);
+  restoreTerminal(false);
+  if (
+    window.innerWidth <= 600 &&
+    !document.body.classList.contains("simple-mode")
+  )
+    setWindowState("maximized", false);
+  else if (document.body.classList.contains("simple-mode"))
     terminal.scrollIntoView({ behavior: "smooth", block: "center" });
   else
     window.scrollTo({
       top: Math.max(0, $(".journey").offsetHeight - innerHeight),
       behavior: "smooth",
     });
-  setPower(true);
-  restoreTerminal(false);
   if (focus) focusPrompt();
 }
 function navigate(route) {
@@ -944,6 +949,8 @@ function initializeScene() {
         try {
           document.body.classList.remove("simple-mode");
           sceneController = createScene(terminal);
+          if (location.pathname !== "/" && !compactScreen.matches)
+            requestAnimationFrame(() => enterTerminal(false));
           if (restoreFocus && !input.disabled) focusPrompt();
         } catch (error) {
           console.warn(
@@ -977,6 +984,7 @@ syncCursor();
 initializeScene();
 if (
   location.pathname !== "/" &&
+  !compactScreen.matches &&
   !document.body.classList.contains("simple-mode")
 )
   requestAnimationFrame(() =>

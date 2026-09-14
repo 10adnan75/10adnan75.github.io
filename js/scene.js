@@ -266,6 +266,9 @@ export function createScene(terminal) {
   screen.scale.setScalar(0.005);
   htmlScene.add(screen);
   const start = new THREE.Vector3(0, 1.2, 13.7);
+  const mobileStart = new THREE.Vector3(2.15, 1.4, 17.5);
+  const mobileTarget = new THREE.Vector3(2.15, 2.15, 0);
+  const desktopTarget = new THREE.Vector3();
   const end = new THREE.Vector3();
   const target = new THREE.Vector3();
   let width = 0,
@@ -329,10 +332,12 @@ export function createScene(terminal) {
     screen.position.copy(screenLocal);
     computer.localToWorld(screen.position);
     computer.getWorldQuaternion(screen.quaternion);
+    const mobile = width <= 600;
     const availableHeight = Math.max(220, height - 260);
+    const horizontalGutter = mobile ? 34 : 120;
     const fitHeight = Math.max(
       3.0 / (availableHeight / height),
-      5 / (Math.min(width - 120, 1200) / width) / (width / height),
+      5 / (Math.min(width - horizontalGutter, 1200) / width) / (width / height),
     );
     const distance =
       fitHeight / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
@@ -341,10 +346,10 @@ export function createScene(terminal) {
       screen.position.y - 0.12,
       screen.position.z + distance,
     );
-    camera.position.lerpVectors(start, end, t);
+    camera.position.lerpVectors(mobile ? mobileStart : start, end, t);
     camera.position.x += Math.sin(t * Math.PI) * 0.45;
     camera.position.y += Math.sin(t * Math.PI) * 0.25;
-    target.set(0, 0, 0).lerp(screen.position, t);
+    target.copy(mobile ? mobileTarget : desktopTarget).lerp(screen.position, t);
     camera.lookAt(target);
     camera.updateMatrixWorld();
     intro.style.opacity = String(1 - Math.min(progress * 3, 1));
