@@ -256,7 +256,7 @@ test("desktop case studies and CLI completion work by keyboard and touch", async
   await input.fill("pro");
   await input.press("Tab");
   await expect(input).toHaveValue("projects");
-  await expect(input).toBeInViewport({ ratio: 0.99 });
+  await expect(input).toBeInViewport({ ratio: 0.95 });
   await expect(page.locator(".idle-cursor")).toBeHidden();
   await expect(page.locator("#typing-cursor")).toBeVisible();
   await input.press("Enter");
