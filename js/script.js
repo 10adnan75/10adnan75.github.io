@@ -37,6 +37,25 @@ const projectScreens = {
   "undergraduate-thesis": "/img/fake-review-preview.jpg",
 };
 const compactScreen = matchMedia("(max-width: 900px), (max-height: 500px)");
+const terminalHints = [
+  "type 'help'. zero judgment.",
+  "'about' for the lore.",
+  "'projects' for proof.",
+  "'research' for rabbit holes.",
+  "'skills' to inspect the stack.",
+  "'contact' if you have a plot.",
+  "'resume' for corporate mode.",
+  "'socials' to stalk professionally.",
+  "'theme pearl' for flashbang mode.",
+  "'football' to touch grass.",
+  "'sudo' nice try.",
+  "'ls' because muscle memory.",
+  "'home' resets the timeline.",
+  "'clear' deletes the evidence.",
+  "'history' exposes your choices.",
+  "'whoami' for an identity crisis.",
+  "ctrl+l cleans the evidence.",
+];
 const routeIntros = {
   home: [
     "ADNAN MAZHARUDDIN SHAIKH",
@@ -253,6 +272,26 @@ function syncCursor() {
   input.addEventListener(type, syncCursor),
 );
 input.addEventListener("keydown", () => queueMicrotask(syncCursor));
+
+let hintIndex = 0;
+function rotateTerminalHint() {
+  if (
+    input.value ||
+    input.disabled ||
+    document.hidden ||
+    viewMode !== "terminal" ||
+    !poweredOn
+  )
+    return;
+
+  input.classList.add("hint-swapping");
+  window.setTimeout(() => {
+    hintIndex = (hintIndex + 1) % terminalHints.length;
+    input.placeholder = terminalHints[hintIndex];
+    input.classList.remove("hint-swapping");
+  }, 140);
+}
+window.setInterval(rotateTerminalHint, 3200);
 
 function applyTheme(theme) {
   if (!themeNames.includes(theme)) return;

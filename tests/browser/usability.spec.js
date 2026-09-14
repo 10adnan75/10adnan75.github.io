@@ -6,6 +6,21 @@ async function command(page, text) {
   await input.press("Enter");
 }
 
+test("terminal hints rotate while idle and pause during typing", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const input = page.getByRole("textbox", { name: "Terminal command" });
+  const firstHint = await input.getAttribute("placeholder");
+  await expect
+    .poll(() => input.getAttribute("placeholder"), { timeout: 5000 })
+    .not.toBe(firstHint);
+  await input.fill("projects");
+  const pausedHint = await input.getAttribute("placeholder");
+  await page.waitForTimeout(3400);
+  await expect(input).toHaveAttribute("placeholder", pausedHint);
+});
+
 test("desktop: native typing, focus, window controls, navigation and power", async ({
   page,
 }) => {

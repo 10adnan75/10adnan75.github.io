@@ -2502,21 +2502,18 @@ body.workspace-maximized {
 }
 @keyframes cursor-pulse {
   0%,
-  44%,
-  100% {
+  49% {
     opacity: 1;
     color: #000;
     background: #fff;
-    box-shadow:
-      0 0 0 1px #ffffffb8,
-      0 0 10px #ffffff70;
+    box-shadow: none;
   }
-  45%,
-  94% {
+  50%,
+  100% {
     opacity: 1;
     color: #fff;
     background: #000;
-    box-shadow: inset 0 0 0 1px #ffffff24;
+    box-shadow: none;
   }
 }
 .command-field:not(:focus-within) .block-cursor {
@@ -2625,9 +2622,9 @@ body.workspace-maximized {
   width: 1ch;
   height: 1.15em;
   flex: none;
-  border-radius: 1px;
+  border-radius: 0;
   background: var(--accent);
-  animation: cursor-pulse 1s steps(1, end) infinite;
+  animation: cursor-pulse 1.06s steps(1, end) infinite;
 }
 .terminal.has-command .idle-cursor {
   display: none;
@@ -2649,8 +2646,8 @@ body.workspace-maximized {
   text-align: center;
   pointer-events: none;
   translate: 0 -50%;
-  border-radius: 1px;
-  animation: cursor-pulse 1s steps(1, end) infinite;
+  border-radius: 0;
+  animation: cursor-pulse 1.06s steps(1, end) infinite;
 }
 .terminal.has-command .typing-cursor {
   display: block;
@@ -2673,6 +2670,10 @@ body.workspace-maximized {
 .terminal-window #command-input::placeholder {
   color: var(--muted);
   opacity: 0.88;
+  transition: opacity 0.14s ease;
+}
+.terminal-window #command-input.hint-swapping::placeholder {
+  opacity: 0;
 }
 .terminal:not(.has-command) #command-input {
   caret-color: transparent;
