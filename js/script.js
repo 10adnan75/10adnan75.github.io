@@ -36,7 +36,7 @@ const projectScreens = {
   "bug-tracker-10adnan75": "/img/bug-tracker-preview.png",
   "undergraduate-thesis": "/img/fake-review-preview.jpg",
 };
-const smallScreen = matchMedia("(max-width: 900px), (max-height: 500px)");
+const compactScreen = matchMedia("(max-width: 900px), (max-height: 500px)");
 terminal.dataset.theme = "platinum";
 try {
   const savedTheme = localStorage.getItem("adnan-theme");
@@ -818,7 +818,7 @@ scroller.addEventListener("click", (event) => {
     return;
   focusPrompt();
   if (
-    !smallScreen.matches &&
+    !compactScreen.matches &&
     window.scrollY < $(".journey").offsetHeight - innerHeight - 20
   )
     enterTerminal();
@@ -834,20 +834,19 @@ window.addEventListener("popstate", () => {
   if (route !== "home") enterTerminal(false);
   else window.scrollTo({ top: 0, behavior: "smooth" });
 });
-function updateMotion() {
+function initializeScene() {
   const restoreFocus = document.activeElement === input;
-  const simple = smallScreen.matches;
-  document.body.classList.toggle("simple-mode", simple);
-  if (simple) {
-    sceneController?.dispose();
-    sceneController = undefined;
+  if (!window.WebGLRenderingContext) {
+    document.body.classList.add("simple-mode");
     $("#terminal-layer").append(terminal);
-    if (restoreFocus && !input.disabled) focusPrompt();
-  } else if (!sceneController)
+    return;
+  }
+  if (!sceneController)
     import("./scene.js")
       .then(({ createScene }) => {
-        if (smallScreen.matches || sceneController) return;
+        if (sceneController) return;
         try {
+          document.body.classList.remove("simple-mode");
           sceneController = createScene(terminal);
           if (restoreFocus && !input.disabled) focusPrompt();
         } catch (error) {
@@ -863,7 +862,6 @@ function updateMotion() {
         document.body.classList.add("simple-mode");
       });
 }
-smallScreen.addEventListener("change", updateMotion);
 document
   .querySelectorAll("[data-icon]")
   .forEach((element) => (element.innerHTML = icon(element.dataset.icon)));
@@ -880,7 +878,7 @@ renderPage(
   false,
 );
 syncCursor();
-updateMotion();
+initializeScene();
 if (
   location.pathname !== "/" &&
   !document.body.classList.contains("simple-mode")

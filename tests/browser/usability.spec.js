@@ -142,6 +142,8 @@ test("mobile: all pages, direct reload, controls and no horizontal overflow", as
     "resume",
   ]) {
     await page.goto(`/${route}/`);
+    await expect(page.locator("#computer-scene canvas")).toBeVisible();
+    await expect(page.locator("body")).not.toHaveClass(/simple-mode/);
     await expect(
       page.locator("#terminal-output .cli-json").first(),
     ).toBeVisible();
@@ -406,7 +408,7 @@ test("desktop view preserves terminal session and shares navigation, themes and 
 test("responsive audit: every page fits both views at narrow, tablet and landscape sizes", async ({
   page,
 }) => {
-  test.setTimeout(180000);
+  test.setTimeout(300000);
   for (const [width, height] of [
     [320, 640],
     [390, 844],

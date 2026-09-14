@@ -123,6 +123,9 @@ button {
   pointer-events: none;
 }
 .intro > * {
+  pointer-events: none;
+}
+.intro .primary-button {
   pointer-events: auto;
 }
 .eyebrow {
@@ -3613,6 +3616,13 @@ body.workspace-maximized {
   }
   .simple-mode .stage {
     padding-top: 78px;
+  }
+  .intro {
+    display: none;
+  }
+  #computer-scene,
+  #terminal-layer {
+    top: var(--header-height);
   }
   .simple-mode .terminal {
     height: calc(100svh - 145px) !important;
