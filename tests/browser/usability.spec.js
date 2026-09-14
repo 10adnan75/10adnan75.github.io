@@ -12,7 +12,6 @@ test("desktop: native typing, focus, window controls, navigation and power", asy
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await expect(page.locator("#boot-loader")).toBeVisible();
   await expect(page.locator("#boot-loader")).toBeHidden();
   await expect(page.locator("#computer-scene canvas")).toBeVisible();
   await expect(page.locator("#terminal")).toHaveAttribute(

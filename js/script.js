@@ -953,7 +953,7 @@ window.addEventListener(
     setTimeout(() => {
       loader.classList.add("is-done");
       setTimeout(() => loader.remove(), 260);
-    }, 360);
+    }, 1750);
   },
   { once: true },
 );

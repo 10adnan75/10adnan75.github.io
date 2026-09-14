@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile, access } from "node:fs/promises";
+import { readFile, access, readdir } from "node:fs/promises";
 import { JSDOM } from "jsdom";
 import { parseCommand, routes } from "../js/content.js";
 
@@ -234,6 +234,16 @@ test("production routes and original assets are included", async () => {
     await access(`dist/${asset}`);
   await assert.rejects(access("dist/ams_cv.pdf"));
   const root = await readFile("dist/index.html", "utf8");
+  const script = await readFile("js/script.js", "utf8");
+  const assets = await readdir("dist/assets");
+  const stylesheet = assets.find(
+    (file) => file.startsWith("index-") && file.endsWith(".css"),
+  );
+  const styles = await readFile(`dist/assets/${stylesheet}`, "utf8");
+  assert.match(root, /class="boot-loader-text">booting portfolio/);
+  assert.match(styles, /@keyframes boot-type/);
+  assert.match(script, /}, 1750\);/);
+  assert.doesNotMatch(script, /adnan-booted|is-returning/);
   assert.doesNotMatch(root, /[\u2014\u2197]/);
   assert.match(
     root,
