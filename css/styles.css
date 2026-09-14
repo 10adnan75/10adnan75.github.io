@@ -403,6 +403,19 @@ h1 > span {
 .prompt-host {
   color: #969696;
 }
+.prompt-identity {
+  display: inline-flex;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  filter: drop-shadow(0 0 7px var(--glow));
+}
+.prompt-identity .prompt-user,
+.prompt-identity .prompt-host {
+  color: var(--accent);
+  background: linear-gradient(110deg, var(--text), var(--accent));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 #command-input {
   flex: 1;
   min-width: 140px;
@@ -4113,6 +4126,15 @@ body:not(.simple-mode) .stage {
 [data-theme="pearl"] .prompt-host,
 [data-theme="pearl"] .echo {
   color: #667185;
+}
+[data-theme="pearl"] .prompt-identity {
+  filter: drop-shadow(0 1px 0 #fff);
+}
+[data-theme="pearl"] .prompt-identity .prompt-user,
+[data-theme="pearl"] .prompt-identity .prompt-host {
+  background: linear-gradient(110deg, #18202e, #526681);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 [data-theme="pearl"] .monitor-brand,
 [data-theme="pearl"] .monitor-power {

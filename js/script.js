@@ -646,7 +646,7 @@ function run(raw) {
   if (routes.includes(name)) {
     const page = setRoute(name);
     append(
-      `<div class="echo">lurker@10adnan75 ~ ❯ ${escapeHtml(raw)}</div>${terminalContent(page, args)}`,
+      `<div class="echo"><span class="prompt-identity"><span class="prompt-user">lurker</span><span class="prompt-host">@10adnan75</span></span><span class="accent"> ~ ❯</span> ${escapeHtml(raw)}</div>${terminalContent(page, args)}`,
     );
     announce(`${page} opened.`);
     return;
