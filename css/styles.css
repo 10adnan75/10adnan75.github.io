@@ -115,6 +115,55 @@ button {
   overflow: hidden;
   background: radial-gradient(ellipse at 68% 50%, #4949492e, transparent 52%);
 }
+.stage::before,
+.stage::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.stage::before {
+  z-index: 0;
+  width: min(66vw, 960px);
+  aspect-ratio: 1;
+  right: -8%;
+  top: 12%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 30deg,
+    transparent 0 22%,
+    color-mix(in srgb, var(--accent) 18%, transparent) 31%,
+    transparent 43% 68%,
+    color-mix(in srgb, var(--accent) 10%, transparent) 78%,
+    transparent 88%
+  );
+  filter: blur(42px);
+  opacity: 0.7;
+  animation: backdrop-orbit 18s linear infinite;
+}
+.stage::after {
+  z-index: 1;
+  inset: 14% 4% 8% 42%;
+  background: repeating-linear-gradient(
+    105deg,
+    transparent 0 42px,
+    color-mix(in srgb, var(--accent) 8%, transparent) 43px,
+    transparent 44px 86px
+  );
+  mask-image: radial-gradient(ellipse, #000 15%, transparent 72%);
+  opacity: 0.5;
+  animation: backdrop-drift 9s ease-in-out infinite alternate;
+}
+@keyframes backdrop-orbit {
+  to {
+    transform: rotate(1turn) scale(1.06);
+  }
+}
+@keyframes backdrop-drift {
+  to {
+    translate: -3% 2%;
+    opacity: 0.8;
+  }
+}
 .intro {
   position: absolute;
   z-index: 4;
@@ -142,6 +191,11 @@ h1 {
 }
 h1 > span {
   color: var(--accent);
+}
+.intro h1 .intro-title-main {
+  color: var(--text);
+  background: none;
+  -webkit-text-fill-color: currentColor;
 }
 .period {
   color: var(--text);
@@ -689,9 +743,6 @@ summary {
   background: #222;
   position: relative;
   z-index: 30;
-}
-.is-page .intro {
-  display: none;
 }
 .is-page .stage {
   padding-top: 130px;

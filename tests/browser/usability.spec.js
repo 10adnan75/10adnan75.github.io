@@ -265,6 +265,30 @@ test("desktop case studies and CLI completion work by keyboard and touch", async
   await expect(page.locator("body")).not.toContainText("—");
 });
 
+test("route intros and workstation backdrop remain useful above the terminal", async ({
+  page,
+}) => {
+  await page.goto("/projects/");
+  await expect(page.locator("#boot-loader")).toBeHidden();
+  await page.evaluate(() => scrollTo(0, 0));
+  await expect(page.locator("#intro-title")).toHaveText("Side quests.");
+  await expect(page.locator("#intro-accent")).toHaveText(
+    "Some actually shipped.",
+  );
+  await expect(page.locator(".intro")).toBeVisible();
+  expect(
+    await page
+      .locator(".stage")
+      .evaluate(
+        (element) => getComputedStyle(element, "::before").animationName,
+      ),
+  ).toContain("backdrop-orbit");
+  await page.getByRole("button", { name: "Open terminal" }).click();
+  await expect(
+    page.getByRole("textbox", { name: "Terminal command" }),
+  ).toBeFocused();
+});
+
 test("project snapshots and currently building stay useful", async ({
   page,
 }) => {

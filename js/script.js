@@ -37,6 +37,56 @@ const projectScreens = {
   "undergraduate-thesis": "/img/fake-review-preview.jpg",
 };
 const compactScreen = matchMedia("(max-width: 900px), (max-height: 500px)");
+const routeIntros = {
+  home: [
+    "ADNAN MAZHARUDDIN SHAIKH",
+    "I build stuff.",
+    "It mostly works.",
+    "Code. Football. Larp.",
+  ],
+  about: [
+    "ABOUT.JSON",
+    "Main character.",
+    "Patch notes included.",
+    "Code, football, questionable sleep.",
+  ],
+  projects: [
+    "PROJECTS.JSON",
+    "Side quests.",
+    "Some actually shipped.",
+    "Eight builds. Zero tutorial clones.",
+  ],
+  research: [
+    "RESEARCH.JSON",
+    "Rabbit holes.",
+    "With citations.",
+    "Receipts for the overthinking.",
+  ],
+  skills: [
+    "SKILLS.JSON",
+    "Stack check.",
+    "No cap.",
+    "Tools I trust with production.",
+  ],
+  contact: [
+    "CONTACT.JSON",
+    "Ping me.",
+    "I reply eventually.",
+    "Good ideas get priority.",
+  ],
+  resume: [
+    "RESUME.JSON",
+    "The receipts.",
+    "Recruiter cut.",
+    "Same lore. Fewer jokes.",
+  ],
+  404: [
+    "404.JSON",
+    "Wrong timeline.",
+    "Nothing spawned here.",
+    "Try home before reality crashes.",
+  ],
+};
 terminal.dataset.theme = "platinum";
 try {
   const savedTheme = localStorage.getItem("adnan-theme");
@@ -471,6 +521,13 @@ function setRoute(route, push = true) {
     else link.removeAttribute("aria-current");
   });
   document.body.classList.toggle("is-page", route !== "home");
+  const [eyebrow, title, accent, copy] = routeIntros[page];
+  $("#intro-eyebrow").textContent = eyebrow;
+  $("#intro-title").textContent = title;
+  $("#intro-accent").textContent = accent;
+  $("#intro-copy").textContent = copy;
+  $("#enter-terminal").textContent =
+    page === "home" ? "Boot me up" : "Open terminal";
   return page;
 }
 function animateContent(container = output) {

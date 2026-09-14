@@ -59,6 +59,8 @@ test("terminal navigation, keyboard UX, filtering, and untrusted input", async (
   assert.match($("#terminal-output").textContent, /10adnan75/);
   run("cd /projects");
   assert.equal(window.location.pathname, "/projects/");
+  assert.equal($("#intro-title").textContent, "Side quests.");
+  assert.equal($("#intro-accent").textContent, "Some actually shipped.");
   assert.equal(document.querySelectorAll(".project-card").length, 0);
   assert.match($("#terminal-output").textContent, /"count": 8/);
   assert.match($("#terminal-output").textContent, /"projects":/);
