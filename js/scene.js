@@ -196,6 +196,48 @@ export function createScene(terminal) {
   grid.material.transparent = true;
   grid.material.opacity = 0.24;
   scene.add(grid);
+  // Soft platinum dust adds depth without competing with the workstation.
+  const particleCanvas = document.createElement("canvas");
+  particleCanvas.width = 64;
+  particleCanvas.height = 64;
+  const particleContext = particleCanvas.getContext("2d");
+  const particleGlow = particleContext.createRadialGradient(
+    32,
+    32,
+    0,
+    32,
+    32,
+    32,
+  );
+  particleGlow.addColorStop(0, "#ffffff");
+  particleGlow.addColorStop(0.25, "#d9dce4cc");
+  particleGlow.addColorStop(1, "#d9dce400");
+  particleContext.fillStyle = particleGlow;
+  particleContext.fillRect(0, 0, 64, 64);
+  const particleTexture = new THREE.CanvasTexture(particleCanvas);
+  const particlePositions = new Float32Array(120 * 3);
+  for (let index = 0; index < 120; index++) {
+    const offset = index * 3;
+    particlePositions[offset] = ((index * 47) % 180) / 10 - 7;
+    particlePositions[offset + 1] = ((index * 71) % 100) / 10 - 4;
+    particlePositions[offset + 2] = -1.5 - ((index * 29) % 70) / 10;
+  }
+  const particleGeometry = new THREE.BufferGeometry();
+  particleGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(particlePositions, 3),
+  );
+  const particleMaterial = new THREE.PointsMaterial({
+    color: 0xe4e7ee,
+    map: particleTexture,
+    size: 0.13,
+    transparent: true,
+    opacity: 0.42,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  const particles = new THREE.Points(particleGeometry, particleMaterial);
+  scene.add(particles);
   // Radial keyboard light.
   const lightCanvas = document.createElement("canvas");
   lightCanvas.width = 128;
@@ -272,6 +314,8 @@ export function createScene(terminal) {
       if (Math.abs(lastKey.position.y + 2.515) < 0.001) lastKey = null;
     }
     lightPool.material.opacity = 0.8 + Math.sin(time * 0.0008) * 0.12;
+    particles.rotation.y = time * 0.000025;
+    particles.position.y = Math.sin(time * 0.00022) * 0.12;
     const lightSweep = Math.sin(time * 0.00015) * 0.7;
     if (!interacting) {
       key.position.x = -3 + lightSweep;
@@ -352,6 +396,7 @@ export function createScene(terminal) {
     key.intensity = on ? 3 : 0.7;
     ambient.intensity = on ? 1.6 : 0.8;
     terminal.dataset.reflections = on ? "on" : "off";
+    particleMaterial.opacity = on ? 0.42 : 0.12;
     requestDraw();
   }
   function pressPhysicalKey(event) {
@@ -394,6 +439,7 @@ export function createScene(terminal) {
     materials.forEach((material) => material.dispose());
     keyTexture.dispose();
     lightTexture.dispose();
+    particleTexture.dispose();
     environment.dispose();
     renderer.dispose();
     renderer.domElement.remove();

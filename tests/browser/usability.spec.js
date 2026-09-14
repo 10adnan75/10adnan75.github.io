@@ -20,7 +20,7 @@ test("desktop: native typing, focus, window controls, navigation and power", asy
     "on",
   );
   const input = page.getByRole("textbox", { name: "Terminal command" });
-  await page.locator(".intro-copy").click();
+  await input.evaluate((element) => element.blur());
   await page.keyboard.type("h");
   await expect(input).toHaveValue("h");
   await input.fill("");
