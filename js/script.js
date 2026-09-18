@@ -125,7 +125,7 @@ let restoreMaximized = false;
 const terminalWindow = $("#terminal-window");
 const appIcons = {
   Desktop:
-    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="15" rx="3"/><path d="M2.5 7.5h19M7.5 7.5V18M10.5 11h7M10.5 14h4.5M9 21h6"/></svg>',
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="11" rx="2.5"/><path d="M7 17h6m-3-3v3"/></svg>',
   Terminal:
     '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="18" rx="4"/><path d="m7 9 3 3-3 3m5.5 0H17"/></svg>',
 };
