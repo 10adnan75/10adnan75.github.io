@@ -454,7 +454,7 @@ function pageContent(route, args = []) {
     case "home":
       return `<p class="boot-line">Your desktop. Your rules.</p><h2>Pick a side quest.</h2><p class="muted">Same human. Less typing.</p>`;
     case "about":
-      return `<p class="boot-line">~/about</p><div class="about-grid"><div><h2>Meet the source of the bugs</h2><p>${profile.name}. Developer. Footballer.</p><p>Community college roots. Coding since 2016. Python blogs since 2020.</p><p class="muted">Dating the debugger. It’s complicated.</p></div><img class="avatar" src="/img/avataaars.svg" alt="Adnan's illustrated avatar"></div><div class="tag-list">${["Python", "Java", "C++", "C#", "JavaScript", "Linux", "Git"].map((x) => `<span>${x}</span>`).join("")}</div><p>${external(profile.resume, "Résumé")}</p>${chips(["skills", "projects", "contact"])}`;
+      return `<p class="boot-line">~/about</p><div class="about-grid"><div><h2>Meet the source of the bugs</h2><p>${profile.name}. Developer. Footballer.</p><p>Community college roots. Coding since 2016. Python blogs since 2020.</p><p class="muted">Dating the debugger. It’s complicated.</p></div><img class="avatar" src="/img/adnan.svg" alt="Adnan's illustrated avatar"></div><div class="tag-list">${["Python", "Java", "C++", "C#", "JavaScript", "Linux", "Git"].map((x) => `<span>${x}</span>`).join("")}</div><p>${external(profile.resume, "Résumé")}</p>${chips(["skills", "projects", "contact"])}`;
     case "projects": {
       const filter =
         ["All", "Systems", "Web", "Research"].find(
@@ -551,7 +551,7 @@ function setRoute(route, push = true) {
   const valid = routes.includes(route);
   const page = valid ? route : "404";
   if (push) history.pushState({}, "", route === "home" ? "/" : `/${route}/`);
-  document.title = `${page === "home" ? "Adnan Shaikh" : page[0].toUpperCase() + page.slice(1) + " | Adnan Shaikh"} | Software Developer`;
+  document.title = `${page === "home" ? "Adnan Mazharuddin Shaikh" : page[0].toUpperCase() + page.slice(1) + " | Adnan M Shaikh"}`;
   $("#current-path").textContent = route === "home" ? "~" : `~/${route}`;
   document.querySelectorAll("[data-route]").forEach((link) => {
     const active = link.dataset.route === route;

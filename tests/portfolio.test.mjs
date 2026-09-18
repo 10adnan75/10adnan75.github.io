@@ -231,7 +231,7 @@ test("production routes and original assets are included", async () => {
     "img/java.JPG",
     "img/linux.JPG",
     "img/python.JPG",
-    "img/avataaars.svg",
+    "img/adnan.svg",
     "img/sorting-visualizer-preview.png",
     "img/speed-typing-test-preview.png",
     "img/bug-tracker-preview.png",

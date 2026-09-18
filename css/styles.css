@@ -666,12 +666,12 @@ h1 > span {
   gap: 30px;
 }
 .avatar {
-  width: 160px;
-  height: 160px;
+  width: 142px;
+  height: 142px;
   background: #232323;
   border: 1px solid #454545;
-  border-radius: 6px;
-  padding: 15px;
+  border-radius: 100px;
+  padding: 1px;
 }
 .timeline {
   border-left: 1px solid #5c5c5c;
@@ -3448,8 +3448,8 @@ body.workspace-maximized {
   gap: 24px;
 }
 .avatar {
-  width: 150px;
-  height: 150px;
+  width: 142px;
+  height: 142px;
 }
 .command-chips {
   align-items: center;
@@ -3547,8 +3547,8 @@ body.workspace-maximized {
     grid-template-columns: minmax(0, 1fr) 120px;
   }
   .avatar {
-    width: 120px;
-    height: 120px;
+    width: 142px;
+    height: 142px;
   }
   .quick-access {
     grid-template-columns: repeat(3, minmax(0, 1fr));
