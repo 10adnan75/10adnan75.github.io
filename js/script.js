@@ -123,6 +123,12 @@ let poweredOn = true;
 let windowState = "normal";
 let restoreMaximized = false;
 const terminalWindow = $("#terminal-window");
+const appIcons = {
+  Desktop:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="15" rx="3"/><path d="M2.5 7.5h19M7.5 7.5V18M10.5 11h7M10.5 14h4.5M9 21h6"/></svg>',
+  Terminal:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="18" rx="4"/><path d="m7 9 3 3-3 3m5.5 0H17"/></svg>',
+};
 function syncWindowIdentity() {
   const app = viewMode === "desktop" ? "Desktop" : "Terminal";
   const hidden = windowState === "closed" || windowState === "minimized";
@@ -133,11 +139,13 @@ function syncWindowIdentity() {
   );
   $("#restore-terminal").title = app;
   $("#dock-app-label").textContent = app;
-  $("#dock-app-icon").innerHTML =
-    app === "Desktop"
-      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="15" rx="3"/><path d="M2.5 7.5h19M7.5 7.5V18M10.5 11h7M10.5 14h4.5M9 21h6"/></svg>'
-      : '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="18" rx="4"/><path d="m7 9 3 3-3 3m5.5 0H17"/></svg>';
+  $("#dock-app-icon").innerHTML = appIcons[app];
+  $("#window-state-icon").innerHTML = appIcons[app];
   $("#dock-app-icon").classList.toggle("dock-desktop-icon", app === "Desktop");
+  $("#window-state-icon").classList.toggle(
+    "window-state-desktop-icon",
+    app === "Desktop",
+  );
   $("#window-close").setAttribute("aria-label", `Close ${app}`);
   $("#window-minimize").setAttribute("aria-label", `Minimize ${app}`);
   $("#window-maximize").setAttribute(
