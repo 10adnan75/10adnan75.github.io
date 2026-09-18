@@ -160,7 +160,20 @@
                       aria-label="Switch to desktop view"
                       aria-pressed="false"
                     >
-                      Desktop
+                      <span class="view-switch-option view-switch-terminal">
+                        <svg viewBox="0 0 20 20" aria-hidden="true">
+                          <rect x="2.5" y="3" width="15" height="14" rx="3" />
+                          <path d="m6 8 2.25 2L6 12m4.5 0h3.5" />
+                        </svg>
+                        <span>CLI</span>
+                      </span>
+                      <span class="view-switch-option view-switch-desktop">
+                        <svg viewBox="0 0 20 20" aria-hidden="true">
+                          <rect x="2.5" y="3" width="15" height="11" rx="2.5" />
+                          <path d="M7 17h6m-3-3v3" />
+                        </svg>
+                        <span>Desktop</span>
+                      </span>
                     </button>
                   </div>
                   <div
@@ -245,7 +258,9 @@
                       class="dock-terminal-icon"
                       id="dock-app-icon"
                       aria-hidden="true"
-                      >&gt;_</span
+                      ><svg viewBox="0 0 24 24">
+                        <rect x="2.5" y="3" width="19" height="18" rx="4" />
+                        <path d="m7 9 3 3-3 3m5.5 0H17" /></svg></span
                     ><span class="dock-label" id="dock-app-label"
                       >Terminal</span
                     >

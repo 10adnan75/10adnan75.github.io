@@ -15,7 +15,7 @@ export function createScene(terminal) {
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true,
-    powerPreference: "low-power",
+    powerPreference: "high-performance",
   });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
   renderer.setClearColor(0x000000, 0);
@@ -360,7 +360,13 @@ export function createScene(terminal) {
     });
     renderer.render(scene, camera);
     htmlRenderer.render(htmlScene, camera);
-    if ((progress < 1 && scrollY < journey.offsetHeight) || lastKey)
+    const intendedRotation = interacting ? restingPointer : pointer;
+    const rotationSettling = rotation.distanceTo(intendedRotation) > 0.001;
+    if (
+      (progress < 1 && scrollY < journey.offsetHeight) ||
+      lastKey ||
+      rotationSettling
+    )
       frame = requestAnimationFrame(draw);
   }
   function requestDraw() {

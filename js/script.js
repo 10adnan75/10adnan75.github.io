@@ -135,8 +135,8 @@ function syncWindowIdentity() {
   $("#dock-app-label").textContent = app;
   $("#dock-app-icon").innerHTML =
     app === "Desktop"
-      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 8v10M10.5 11h7M10.5 14h5"/><path d="M9 21h6"/></svg>'
-      : "&gt;_";
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="15" rx="3"/><path d="M2.5 7.5h19M7.5 7.5V18M10.5 11h7M10.5 14h4.5M9 21h6"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="18" rx="4"/><path d="m7 9 3 3-3 3m5.5 0H17"/></svg>';
   $("#dock-app-icon").classList.toggle("dock-desktop-icon", app === "Desktop");
   $("#window-close").setAttribute("aria-label", `Close ${app}`);
   $("#window-minimize").setAttribute("aria-label", `Minimize ${app}`);
@@ -224,7 +224,7 @@ $("#window-close").addEventListener("click", () => {
   setWindowState("closed");
 });
 $("#window-minimize").addEventListener("click", () => {
-  restoreMaximized = windowState === "maximized";
+  restoreMaximized = windowState === "maximized" && window.innerWidth > 600;
   setWindowState("minimized");
 });
 $("#window-maximize").addEventListener("click", toggleMaximize);
@@ -359,7 +359,6 @@ function setView(mode) {
   scroller.inert = mode === "desktop";
   $("#desktop-view").hidden = mode !== "desktop";
   terminal.dataset.view = mode;
-  $("#view-switch").textContent = mode === "desktop" ? "Terminal" : "Desktop";
   $("#view-switch").setAttribute(
     "aria-label",
     mode === "desktop" ? "Switch to terminal view" : "Switch to desktop view",
